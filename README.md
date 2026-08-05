@@ -18,11 +18,13 @@ Your analyst and operator. Five modes in one skill:
 - **Strategy** — ICP sharpening and rank-ordered GTM plays.
 
 ### 🎨 Creative Director
-Your performance-creative lead. Four modes in one skill:
+Your performance-creative lead. Five modes in one skill:
 - **Paid Social Copy** — scroll-stopping ad copy for cold audiences.
 - **Paid Search Copy** — full responsive search ad sets.
 - **Video Scripts** — production-ready short-form scripts.
 - **Ad Image / Display** — creative direction and specs (or finished images).
+- **Video → Hook Carousel** — repurpose a long-form video into an organic social
+  carousel of curiosity-gap headlines, designed in Canva off your brand system.
 
 ## How to use
 
