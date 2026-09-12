@@ -24,6 +24,9 @@ Your performance-creative lead. Four modes in one skill:
 - **Video Scripts** — production-ready short-form scripts.
 - **Ad Image / Display** — creative direction and specs (or finished images).
 
+Shared creative references:
+- **[Short-Form Video Format Library](creative-director/video-formats.md)** — eight reusable structures for choosing a visual format before scripting or storyboarding.
+
 ## How to use
 
 1. Add this repo to your Claude project (or reference it).
