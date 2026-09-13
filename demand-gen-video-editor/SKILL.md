@@ -193,25 +193,28 @@ Do not cram multiple CTAs, paragraphs, or feature lists into the end card.
 
 See `references/ffmpeg-editing.md` for tested command patterns.
 
-## Step 6 — QC before delivery
+## Step 6 — Mandatory frame-by-frame QC before delivery
 
-Verify every clip after rendering.
+Do not share a video immediately after rendering. Every render must pass both a full visual review and a playback check.
 
-Check:
+1. Inspect the complete rendered video frame-by-frame, or with an equivalent all-frame sequential review at full resolution. Do not substitute a few timestamp screenshots or a contact sheet for this review.
+2. Play the exported MP4 from start to finish in a standard player.
+3. Run `scripts/verify_video.py` for basic technical verification.
+
+During the frame-by-frame review, check:
 - runtime matches the approved cut plus intentional end screen
 - opening starts cleanly and the hook is not clipped
 - audio is synchronized and audible
-- headline is readable and not cut off
-- captions are correctly spelled, timed, and inside safe zones
+- every headline and caption is readable, correctly spelled, timed correctly, and inside safe zones
+- text never covers a face, product proof, or another important visual
 - no subtitle overlaps with the end screen
-- no accidental black frames or transition glitches
+- no accidental black, frozen, duplicated, or partially rendered frames
+- no transition glitch, flash, incomplete end-card population, or logo crop
 - portrait export is exactly the intended dimensions
-- source footage has not been stretched
-- final encode plays through successfully
+- source footage has not been stretched and landscape demos use the approved crop or contained treatment
+- final encode plays through successfully and the delivered file opens in the intended preview surface
 
-Use `scripts/verify_video.py` for basic technical verification.
-
-If a render fails QC, fix it before presenting the file.
+If any issue is found, fix it, re-render, and repeat the full QC pass before presenting the file. Never present an unreviewed render as complete.
 
 ## Delivery format
 
