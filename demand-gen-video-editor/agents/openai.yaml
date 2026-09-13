@@ -1,0 +1,3 @@
+interface:
+  display_name: "Demand Gen Video Editor"
+  short_description: "Turn transcripts into approved short-form clips, then edit them with FFmpeg."
