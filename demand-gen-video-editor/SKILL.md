@@ -21,9 +21,10 @@ Follow this order. Do not skip approval gates.
 1. Build or load the **Video Style Profile**.
 2. Review the timestamped transcript and propose clips.
 3. Stop for explicit clip approval.
-4. Receive the source video.
-5. Cut and style only the approved clips with FFmpeg.
-6. QC every render and return a clip manifest plus the finished files.
+4. Record the approved decisions in a project-specific **Edit Map**.
+5. Receive and inspect the source video.
+6. Cut and style only the approved clips with FFmpeg.
+7. QC every render and return a clip manifest plus the finished files.
 
 If a Video Style Profile already exists for the user, reuse it unless they ask to change the style.
 
@@ -121,7 +122,22 @@ Accept approval in any convenient form, for example:
 
 If the user changes a boundary, treat their timestamp as authoritative.
 
-## Step 4 — Receive and inspect the source video
+## Step 4 — Record the Edit Map
+
+After approval and before rendering, create or update a concise project-specific `EDIT_MAP.md`. It is the durable source of truth for that video; do not restart transcript analysis for a later visual or timing revision.
+
+For each approved clip, record:
+- source filename and approved start/end timestamps
+- final format and framing decision
+- headline copy, duration, and placement
+- caption style and any approved copy corrections
+- intentional trims, b-roll, overlays, or reframe notes
+- end-screen CTA and duration, or an explicit “none”
+- the proof frames required before delivery
+
+Keep the shared skill brand-neutral. The Edit Map stores project decisions only. On a later revision, update only the affected row or decision and preserve all other approved choices.
+
+## Step 5 — Receive and inspect the source video
 
 After approval, ask for or locate the source video file if it is not already available.
 
@@ -132,9 +148,11 @@ Before editing:
 
 Do not replace or regenerate source footage. The default workflow uses the user's original video and audio only.
 
-## Step 5 — FFmpeg edit
+## Step 6 — FFmpeg edit
 
 Use FFmpeg for the actual video editing. Use the scripts in `scripts/` when they fit; use direct FFmpeg commands when custom styling is required.
+
+Follow the approved `EDIT_MAP.md`. Do not make new structural, copy, or style decisions during render unless the user explicitly changes the map.
 
 ### Cut behavior
 
