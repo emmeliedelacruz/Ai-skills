@@ -29,6 +29,10 @@ This is the canonical, company-agnostic reference for selecting a short-form vid
 
 Use this format for a fast, social-native explanation in which a creator's direct-to-camera delivery is the spine and graphics make the argument easier to understand. It is not a split-screen format: switch between full-screen presenter moments and full-screen graphic moments when each earns the canvas.
 
+### Production skill
+
+When this format is selected for an actual edit, use [Breakdown Video Editor](../breakdown-video-editor/SKILL.md). It applies this treatment to each new recording with reusable style profiles, word-aligned cues, editable graphic components, face-safe layouts, deterministic rendering, and preview-before-publishing delivery. This library owns format selection; the linked skill owns production. Brand-specific workflows supply their colors, claims, assets, and delivery requirements.
+
 ### Styling rules
 
 - Build the edit around the argument, not an arbitrary sequence of graphics: hook → tension → reframe → payoff → CTA.
