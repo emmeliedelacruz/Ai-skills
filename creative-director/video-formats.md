@@ -29,9 +29,9 @@ This is the canonical, company-agnostic reference for selecting a short-form vid
 
 Use this format for a fast, social-native explanation in which a creator's direct-to-camera delivery is the spine and graphics make the argument easier to understand. It is not a split-screen format: switch between full-screen presenter moments and full-screen graphic moments when each earns the canvas.
 
-### Production skill
+### Bubble production reference
 
-When this format is selected for an actual edit, use [Breakdown Video Editor](../breakdown-video-editor/SKILL.md). It applies this treatment to each new recording with reusable style profiles, word-aligned cues, editable graphic components, face-safe layouts, deterministic rendering, and preview-before-publishing delivery. This library owns format selection; the linked skill owns production. Brand-specific workflows supply their colors, claims, assets, and delivery requirements.
+For Bubble videos, use the [Bubble breakdown production reference](https://github.com/emmeliedelacruz/Bubble/blob/main/marketing/bubble-ad-video/references/breakdown-videos.md) through [Bubble Ad Video](https://github.com/emmeliedelacruz/Bubble/blob/main/marketing/bubble-ad-video/SKILL.md). It preserves Bubble's approved colors, typography, graphic components, and motion while adapting to each new recording. This library remains company-agnostic and owns general format logic; the Bubble reference owns that brand's execution.
 
 ### Styling rules
 
