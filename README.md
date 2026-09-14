@@ -31,9 +31,6 @@ Your transcript-to-short-form editing workflow. It:
 - **Stops for approval** — no editing starts until you approve the exact clips/timestamps.
 - **Edits with FFmpeg** — cuts the approved source footage, reframes it for short-form, burns captions, adds headline overlays and end cards, then runs technical QC.
 
-### Breakdown Video Editor
-[Apply the creator-led editorial style to any new source video](breakdown-video-editor/SKILL.md). Reuses brand styling and graphic components while measuring fresh word cues and adapting the visual argument, layout, and duration. Edits original footage deterministically and delivers a chat preview before publishing.
-
 Shared creative references:
 - **[Short-Form Video Format Library](creative-director/video-formats.md)** — eight reusable structures for choosing a visual format before scripting or storyboarding.
 
