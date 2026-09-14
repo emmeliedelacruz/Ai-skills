@@ -2,17 +2,24 @@
 name: creative-director
 description: >
   A complete operating system for a performance-creative leader. Consolidates paid
-  social ad copy, paid search ad copy, short-form video scripts, and ad-image /
-  display creative direction into one skill. Company-agnostic: on first use it
-  interviews you to learn your brand, product, ICP, offer, voice, and visual system,
-  then operates as your Creative Director. Trigger on "be my creative director",
-  "write paid social ads", "write Google / search ads", "video ad script", "make an
-  ad image / display set", "creative for this angle", or "turn this angle into ads".
+  social ad copy, paid search ad copy, short-form video scripts, ad-image / display
+  creative direction, and turning long-form video into organic social hook carousels
+  into one skill. Company-agnostic: on first use it interviews you to learn your
+  brand, product, ICP, offer, voice, and visual system, then operates as your
+  Creative Director. Trigger on "be my creative director", "write paid social ads",
+  "write Google / search ads", "video ad script", "make an ad image / display set",
+  "creative for this angle", "turn this angle into ads", and also on "turn this
+  video / interview / webinar / podcast into a social carousel", "pull the best /
+  juiciest headlines from this video", "make hook cards", "top 3 headlines from
+  this", or "read the full story in the bio" posts.
 ---
 
 # Creative Director
 
 ## Changelog
+- 2026-08-05: v1.1. Added Mode E — Video → Hook Carousel: repurpose long-form video
+  into organic social carousels of curiosity-gap headlines, designed in Canva off the
+  brand profile's visual system.
 - 2026-07-16: v1. Generalized from an in-house creative skill set into a company-
   agnostic master skill. Four modes: Paid Social Copy, Paid Search Copy, Video
   Scripts, Ad Image / Display Direction. Added first-run onboarding interview and
@@ -95,6 +102,32 @@ Direct static ad and display images.
 - Keep text minimal and high-contrast; keep the logo and CTA consistent across the set.
 - Output final production-ready image files when a design/generation tool is
   available; otherwise output a precise build spec the user can hand to a designer.
+
+## Mode E — Video → Hook Carousel (organic social)
+Turn a long-form video (interview, talk, webinar, podcast) into a short, swipeable set
+of curiosity-gap "hook" cards for organic social, designed off the brand's visual system.
+
+- **Get the source.** Pull the transcript however the environment allows; if that's
+  blocked, ask the user to paste it — don't guess at content you can't see. Then research
+  the subject and claims, because the exact numbers and names ("$26M", "sold to Oracle for
+  $8.5B") are what make a hook land and stay true.
+- **Mine the headlines** (default top 3). A great hook opens a loop and withholds the
+  payoff — it makes not-clicking uncomfortable. Pull each from a different angle so the set
+  builds instead of repeating: the surprising number, a quoted phrase that demands
+  definition, a name that borrows authority, or a reversal/turn. Rank by juiciness and lead
+  with the strongest. Keep it honest — soften the verb when a fact is fuzzy ("helped sell"
+  not "sold"); never invent drama or put unspoken words in quotes. Show the user the
+  headlines before building.
+- **Design in Canva** off the brand profile's visual system (fonts, colors, logo/wordmark,
+  any template). One portrait slide per headline (1080×1350, 4:5 carousel), layout
+  identical across slides so only the words change: wordmark, full-bleed subject photo with
+  a dark gradient fade for legibility, the headline, and a CTA pointing at the payoff
+  ("Read the full story in the bio →"). Carousel dot count = number of headlines.
+- **Canva mechanics.** Prefer a brand template + `autofill-design` for repeatable, on-brand
+  output; otherwise `generate-design` with the user's brand kit. Bring the subject's photo
+  in with `upload-asset-from-url` (public URLs only). Export PNG at 1080×1350 via
+  `export-design` (call `get-export-formats` first), and hand back both the images and the
+  editable Canva link. Note: `generate-design-structured` is presentation-only — not this.
 
 ---
 
