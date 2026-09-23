@@ -1,11 +1,11 @@
 ---
-name: vibe-coding
+name: ui-principles
 description: Build, refine, or audit websites and app interfaces with intentional product design and working behavior. Use for vibe coding, frontend builds, dashboards, landing pages, UI redesigns, or requests to remove an AI-generated or template-like appearance. Enforces Emmelie's visual exclusions, seven UI principles, responsive implementation, and visual QA.
 ---
 
-# Vibe Coding
+# Vibe Coding: UI Principles
 
-Build interfaces around a specific user's task, content, and product. Deliver working software with deliberate visual choices. Apply this skill alongside the project's engineering instructions and the available building or hosting workflow. Do not require Figma access to use these principles.
+Build interfaces around a specific user's task, content, and product. Deliver working software with deliberate visual choices. Apply this skill alongside the project's engineering instructions and the available building or hosting workflow. For the layout recipe of a landing page or any multi-section page, also load `../premium-pages/SKILL.md`. Do not require Figma access to use these principles.
 
 ## Priority and scope
 
