@@ -32,9 +32,10 @@ Your transcript-to-short-form editing workflow. It:
 - **Edits with FFmpeg** — cuts the approved source footage, reframes it for short-form, burns captions, adds headline overlays and end cards, then runs technical QC.
 
 ### 💻 Vibe Coding
-A folder of two skills for building interfaces that look designed, not templated:
+A folder of three skills for building interfaces that look designed, not templated:
 - **[UI Principles](vibe-coding/ui-principles/SKILL.md)**: visual exclusions, seven UI principles, a complete working flow, responsive behavior and visual QA. Load it for any UI work.
 - **[Premium Pages](vibe-coding/premium-pages/SKILL.md)**: the layout recipe for any multi-section page. It covers a hero with a live product preview, alternating section backgrounds, photo-backed sections, three levels of hierarchy, high-contrast pricing and copy rules.
+- **[Software Landing Page](vibe-coding/software-landing-page/SKILL.md)**: the landing page recipe for software products. It shows the product working, uses an interactive product tour instead of crammed feature grids, leads pricing with the outcome, and cuts any section that does nothing.
 
 Shared creative references:
 - **[Short-Form Video Format Library](creative-director/video-formats.md)** — eight reusable structures for choosing a visual format before scripting or storyboarding.
