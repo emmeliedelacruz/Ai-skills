@@ -37,6 +37,10 @@ A folder of three skills for building interfaces that look designed, not templat
 - **[Premium Pages](vibe-coding/premium-pages/SKILL.md)**: the layout recipe for any multi-section page. It covers a hero with a live product preview, alternating section backgrounds, photo-backed sections, three levels of hierarchy, high-contrast pricing and copy rules.
 - **[Software Landing Page](vibe-coding/software-landing-page/SKILL.md)**: the landing page recipe for software products. It shows the product working, uses an interactive product tour instead of crammed feature grids, leads pricing with the outcome, and cuts any section that does nothing.
 
+### 🫧 Bubble MCP Build Patterns
+A build playbook for making Bubble apps through the Bubble MCP that match a reference 1:1:
+- **[Bubble MCP Build Patterns](bubble-mcp-build-patterns/SKILL.md)**: reference capture and a parity checklist, exact-value builds, groups named as they are built, a responsive recipe, side-by-side fidelity checks, real-browser testing, and the Bubble/MCP gotchas that cause silent failures.
+
 Shared creative references:
 - **[Short-Form Video Format Library](creative-director/video-formats.md)** — eight reusable structures for choosing a visual format before scripting or storyboarding.
 
