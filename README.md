@@ -39,7 +39,6 @@ A folder of three skills for building interfaces that look designed, not templat
 
 ### 🫧 Bubble MCP Build Patterns
 A build playbook for making Bubble apps through the Bubble MCP that match a reference 1:1:
-- **[Bubble MCP Build Patterns](bubble-mcp-build-patterns/SKILL.md)**: reference capture and a parity checklist, exact-value builds, groups named as they are built, a responsive recipe, side-by-side fidelity checks, real-browser testing, and the Bubble/MCP gotchas that cause silent failures.
 
 Shared creative references:
 - **[Short-Form Video Format Library](creative-director/video-formats.md)** — eight reusable structures for choosing a visual format before scripting or storyboarding.
