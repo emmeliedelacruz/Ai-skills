@@ -40,6 +40,7 @@ A folder of three skills for building interfaces that look designed, not templat
 ### ⚖️ Legal Assistant
 A folder of skills for a law firm's AI employee. See **[legal-assistant/README.md](legal-assistant/README.md)**.
 - **[Daily Inbox Brief](legal-assistant/daily-inbox-brief/SKILL.md)**: a weekday-morning Gmail scan that returns a prioritized brief with replies drafted for approval.
+- **[Contract Review](legal-assistant/contract-review/SKILL.md)** (draft): initial redlines on creator contracts, always checking usage rights, net payment terms and kill fees.
 
 Shared creative references:
 - **[Short-Form Video Format Library](creative-director/video-formats.md)** — eight reusable structures for choosing a visual format before scripting or storyboarding.

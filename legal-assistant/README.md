@@ -9,12 +9,12 @@ All skills here are generic. Firm details (name, signature, fees, templates) liv
 | Skill | Status | When to use |
 | --- | --- | --- |
 | [Daily Inbox Brief](daily-inbox-brief/SKILL.md) | Approved | Weekday-morning Gmail scan and prioritized brief |
+| [Contract Review](contract-review/SKILL.md) | Draft, awaiting sign-off | Creator contracts: initial redlines, always checks usage rights, net terms and kill fees |
 
 ## Proposed, not yet written
 These come up in the daily work. Each needs the attorney's checklist or templates before drafting.
 - Client Email Replies
 - Trademark Application Review
-- Contract Review
 
 ## Rules for every skill here
 - Drafts only. The attorney approves everything before it is sent or filed.

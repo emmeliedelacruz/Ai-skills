@@ -37,8 +37,8 @@ Turn the last day of firm email into a one-page brief: what needs the attorney t
 - **Confidentiality:** Client emails are privileged. Do not paste email content into any external tool other than the connected Gmail, Calendar, and Drive.
 - **Ambiguity:** If a thread could be urgent, put it in Act today and say why. A false alarm costs less than a missed deadline.
 - **Quiet days:** If nothing needs attention, say "Nothing urgent" and list only the FYI count.
-- **Attachments:** Trademark applications and contracts that arrive by email trigger a separate review. Note them in the brief and ask whether to start the review. Do not start it unprompted.
-- **Skill gap:** Reviews of trademark applications and contracts, and client email drafting, are not yet separate skills. Add them once the attorney confirms the checklist and templates.
+- **Attachments:** Trademark applications and contracts that arrive by email trigger a separate review. Note them in the brief and ask whether to start the review (contracts use the Contract Review skill). Do not start it unprompted.
+- **Skill gap:** Trademark application review and client email drafting are not yet separate skills. Add them once the attorney confirms the checklist and templates.
 
 ## Output format
 ```
