@@ -8,7 +8,7 @@ All skills here are generic. Firm details (name, signature, fees, templates) liv
 
 | Skill | Status | When to use |
 | --- | --- | --- |
-| [Daily Inbox Brief](daily-inbox-brief/SKILL.md) | Draft, awaiting sign-off | Weekday-morning Gmail scan and prioritized brief |
+| [Daily Inbox Brief](daily-inbox-brief/SKILL.md) | Approved | Weekday-morning Gmail scan and prioritized brief |
 
 ## Proposed, not yet written
 These come up in the daily work. Each needs the attorney's checklist or templates before drafting.

@@ -5,11 +5,12 @@ description: Weekday-morning Gmail scan for a law firm. Finds items that need th
 
 # Daily Legal Inbox Brief
 
-**Status:** DRAFT, awaiting sign-off
+**Status:** Approved
 **Type:** New skill
 **Canonical copy:** `legal-assistant/daily-inbox-brief/SKILL.md` in the Ai-skills repo. Do not keep a second copy in a project or on Drive. Projects reference this file.
 
 ## Changelog
+- 2026-10-16: Approved. Pushing straight to main from now on.
 - 2026-10-16: First draft.
 
 ## Purpose / When to use
