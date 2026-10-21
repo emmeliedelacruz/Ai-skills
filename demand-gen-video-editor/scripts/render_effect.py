@@ -68,6 +68,10 @@ class MaskReader:
             self.idx += 1
         return self.cur or Image.new("L", (W, H), 0)
 
+    def close(self):
+        self.proc.kill()
+        self.proc.wait()
+
 
 def read_frame_at(path, t):
     p = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t:.3f}", "-i", path, "-vf", VF, "-frames:v", "1",
@@ -120,6 +124,8 @@ def main():
         for i, th in enumerate(thumbs):
             sheet.paste(th, (i * (W // 3 + 6), 0))
         sheet.save(a.dst)
+        if ctx._mask_reader:
+            ctx._mask_reader.close()
         return
 
     fps, src_dur = probe(a.src)
@@ -151,6 +157,8 @@ def main():
     enc.stdin.close()
     enc.wait()
     dec.wait()
+    if ctx._mask_reader:
+        ctx._mask_reader.close()
     if enc.returncode:
         raise SystemExit("ffmpeg encode failed")
 
