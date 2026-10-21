@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Performance Dashboard</title>
+<title>Dashboard</title>
 <style>
 :root{--ink:#111827;--mute:#6B7280;--faint:#9CA3AF;--line:#E5E7EB;--soft:#F3F4F6;--bg:#F7F8FA;--card:#fff;--accent:#2563EB;--g:#15803D;--gbg:#F0FDF4;--y:#A16207;--ybg:#FFFBEB;--r:#B91C1C;--rbg:#FEF2F2;}
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -93,96 +93,104 @@ td.nm{max-width:240px;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
 
 <script>
 // ══ CONFIG: the only block the analyst edits ═══════════════════════════════
-// Rules: every number comes from the user's data. Thresholds come from the approved measurement framework.
+// Domain-neutral: works for any funnel or KPI tree (product, revenue, ops, support, content...).
+// Every number comes from the user's data. Thresholds come from the approved measurement framework.
+// Delete a top-level section you don't need (funnel, segments, periods, actions, experiments, framework)
+// and its page or block disappears.
 const DASH = {
-  meta:{ title:'Acme Growth', period:'Jan 1-26', accent:'#2563EB', sample:true },
+  meta:{ title:'Example Co', period:'Last 30 days', accent:'#2563EB', sample:true },
+  groupLabel:'Group',     // the top-level split (platform, region, team, plan...)
+  segmentLabel:'Segment', // the slice inside a group (cohort, tier, category...)
 
-  // Metric columns, shared by the Performance and Actions pages. f(row) derives a value; omit f to read row[key].
-  // better:'high'|'low' + green/yellow thresholds drive the chip color. fmt: int | usd | pct | x
+  // Metric columns for Performance and Actions. f(row) derives a value; omit f to read row[key].
+  // better:'high'|'low' + green/yellow thresholds drive chip color. fmt: int | usd | pct | x
   columns:[
-    {key:'spend',  label:'Spend',   fmt:'usd'},
-    {key:'leads',  label:'Leads',   fmt:'int'},
-    {key:'cpl',    label:'$/Lead',  fmt:'usd', better:'low',  green:40,  yellow:70,  f:r=>r.spend/r.leads},
-    {key:'qual',   label:'Qualified %', fmt:'pct', better:'high', green:40, yellow:25, f:r=>r.qualified/r.leads},
-    {key:'won',    label:'Won',     fmt:'int'},
-    {key:'cac',    label:'$/Won',   fmt:'usd', better:'low',  green:600, yellow:900, f:r=>r.spend/r.won},
-    {key:'revenue',label:'Revenue', fmt:'usd'},
-    {key:'roas',   label:'Return',  fmt:'x',   better:'high', green:1.2, yellow:0.85, f:r=>r.revenue/r.spend}
+    {key:'entered',   label:'Entered',        fmt:'int'},
+    {key:'engaged',   label:'Engaged',        fmt:'int'},
+    {key:'engageRate',label:'Engage rate',    fmt:'pct', better:'high', green:0.50, yellow:0.35, f:r=>r.engaged/r.entered},
+    {key:'converted', label:'Converted',      fmt:'int'},
+    {key:'convRate',  label:'Conversion rate',fmt:'pct', better:'high', green:0.08, yellow:0.05, f:r=>r.converted/r.entered},
+    {key:'value',     label:'Value',          fmt:'usd'},
+    {key:'valuePer',  label:'Value per entrant', fmt:'usd', better:'high', green:3, yellow:2, f:r=>r.value/r.entered}
   ],
-  defaultSort:{key:'roas', dir:'desc'},
+  defaultSort:{key:'convRate', dir:'desc'},
 
-  // Funnel: stage keys must exist in each group's totals. green/yellow = stage-to-stage conversion thresholds.
+  // Funnel: stage keys must exist in each group's totals. green/yellow = stage-to-stage conversion thresholds (%).
   funnel:{
     stages:[
-      {key:'clicks',    label:'Clicks'},
-      {key:'leads',     label:'Leads',     green:5,  yellow:3},
-      {key:'qualified', label:'Qualified', green:40, yellow:25},
-      {key:'won',       label:'Won',       green:20, yellow:10}
+      {key:'entered',   label:'Entered'},
+      {key:'engaged',   label:'Engaged',   green:50, yellow:35},
+      {key:'converted', label:'Converted', green:15, yellow:10},
+      {key:'retained',  label:'Retained',  green:60, yellow:40}
     ],
-    overall:{green:2, yellow:1}, // first stage to last stage, %
+    overall:{green:5, yellow:3}, // first stage to last stage, %
+    summary:[ // extra figures at the bottom of each funnel card; f(totals)
+      {label:'Value',            fmt:'usd', f:t=>t.value},
+      {label:'Value per entrant',fmt:'usd', f:t=>t.value/t.entered}
+    ],
     groups:[
-      {id:'a', label:'Channel A', color:'#2563EB', totals:{spend:52000, revenue:71000, clicks:30400, leads:1420, qualified:610, won:96}},
-      {id:'b', label:'Channel B', color:'#0F766E', totals:{spend:38000, revenue:35000, clicks:9800,  leads:520,  qualified:170, won:41}}
+      {id:'a', label:'Group A', color:'#2563EB', totals:{entered:30400, engaged:16200, converted:2400, retained:1500, value:96000}},
+      {id:'b', label:'Group B', color:'#0F766E', totals:{entered:9800,  engaged:3900,  converted:420,  retained:150,  value:14000}}
     ]
   },
   // KPI strip: f(totals) is evaluated for the combined total and per group.
   kpis:[
-    {label:'Spend',   fmt:'usd', f:t=>t.spend},
-    {label:'Leads',   fmt:'int', f:t=>t.leads},
-    {label:'$/Lead',  fmt:'usd', f:t=>t.spend/t.leads},
-    {label:'Won',     fmt:'int', f:t=>t.won},
-    {label:'$/Won',   fmt:'usd', f:t=>t.spend/t.won},
-    {label:'Revenue', fmt:'usd', f:t=>t.revenue},
-    {label:'Return',  fmt:'x',   f:t=>t.revenue/t.spend}
+    {label:'Entered',          fmt:'int', f:t=>t.entered},
+    {label:'Converted',        fmt:'int', f:t=>t.converted},
+    {label:'Conversion rate',  fmt:'pct', f:t=>t.converted/t.entered},
+    {label:'Value',            fmt:'usd', f:t=>t.value},
+    {label:'Value per entrant',fmt:'usd', f:t=>t.value/t.entered}
   ],
   // Segment heatmap: one block per group; counts use the same stage keys as the funnel.
-  segmentLabel:'Segment',
   segments:[
-    {group:'a', rows:[{name:'Segment 1',counts:{clicks:12000,leads:700,qualified:330,won:52}},{name:'Segment 2',counts:{clicks:9000,leads:420,qualified:160,won:30}},{name:'Segment 3',counts:{clicks:9400,leads:300,qualified:120,won:14}}]},
-    {group:'b', rows:[{name:'Segment 1',counts:{clicks:5000,leads:300,qualified:110,won:28}},{name:'Segment 2',counts:{clicks:4800,leads:220,qualified:60,won:13}}]}
+    {group:'a', rows:[{name:'Segment 1',counts:{entered:12000,engaged:7000,converted:1200,retained:800}},{name:'Segment 2',counts:{entered:9000,engaged:4800,converted:700,retained:420}},{name:'Segment 3',counts:{entered:9400,engaged:4400,converted:500,retained:280}}]},
+    {group:'b', rows:[{name:'Segment 1',counts:{entered:5000,engaged:2200,converted:280,retained:110}},{name:'Segment 2',counts:{entered:4800,engaged:1700,converted:140,retained:40}}]}
   ],
 
-  // Performance: one tab per period, a sub-tab per group. Rows carry raw fields the columns need.
+  // Periods: one tab per time window, a sub-tab per group. Rows carry the raw fields the columns need.
   periods:[
-    {id:'month', label:'Month to date', groups:[
-      {id:'a', label:'Channel A', rows:[
-        {name:'Campaign 1', spend:21000, leads:640, qualified:300, won:50, revenue:36000},
-        {name:'Campaign 2', spend:18000, leads:520, qualified:190, won:30, revenue:24000},
-        {name:'Campaign 3', spend:13000, leads:260, qualified:120, won:16, revenue:11000}]},
-      {id:'b', label:'Channel B', rows:[
-        {name:'Campaign 4', spend:22000, leads:330, qualified:120, won:27, revenue:21000},
-        {name:'Campaign 5', spend:16000, leads:190, qualified:50,  won:14, revenue:14000}]}
+    {id:'current', label:'Current period', groups:[
+      {id:'a', label:'Group A', rows:[
+        {name:'Item 1', entered:12000, engaged:7000, converted:1200, value:48000},
+        {name:'Item 2', entered:9000,  engaged:4800, converted:700,  value:28000},
+        {name:'Item 3', entered:9400,  engaged:4400, converted:500,  value:20000}]},
+      {id:'b', label:'Group B', rows:[
+        {name:'Item 4', entered:5000, engaged:2200, converted:280, value:9000},
+        {name:'Item 5', entered:4800, engaged:1700, converted:140, value:5000}]}
     ]},
-    {id:'week', label:'Last 7 days', groups:[
-      {id:'a', label:'Channel A', rows:[
-        {name:'Campaign 1', spend:5400, leads:160, qualified:75, won:12, revenue:9100},
-        {name:'Campaign 2', spend:4600, leads:130, qualified:44, won:7,  revenue:5200},
-        {name:'Campaign 3', spend:3300, leads:60,  qualified:25, won:3,  revenue:2100}]},
-      {id:'b', label:'Channel B', rows:[
-        {name:'Campaign 4', spend:5600, leads:80, qualified:30, won:6, revenue:4800},
-        {name:'Campaign 5', spend:4100, leads:45, qualified:11, won:2, revenue:1700}]}
+    {id:'recent', label:'Last 7 days', groups:[
+      {id:'a', label:'Group A', rows:[
+        {name:'Item 1', entered:2900, engaged:1700, converted:300, value:12000},
+        {name:'Item 2', entered:2100, engaged:1100, converted:150, value:6000},
+        {name:'Item 3', entered:2200, engaged:1000, converted:100, value:4000}]},
+      {id:'b', label:'Group B', rows:[
+        {name:'Item 4', entered:1200, engaged:540, converted:70, value:2200},
+        {name:'Item 5', entered:1100, engaged:390, converted:30, value:1100}]}
     ]}
   ],
 
-  // Actions: scale/pull lists computed from one period's rows using one column. Mirrors the framework's decision rules.
-  actions:{period:'month', metric:'roas', scaleAt:1.2, pullAt:0.85, scaleMin:{key:'leads',n:3}, pullMin:{key:'spend',n:1000}, show:['spend','leads','cac']},
+  // Actions: "act on" and "fix or stop" lists from one period using one column.
+  // goodAt / badAt follow the column's direction (high-better: good >= goodAt, bad <= badAt; low-better: reversed).
+  // goodMin / badMin set the minimum volume before a row can qualify.
+  actions:{period:'current', metric:'convRate', goodAt:0.10, badAt:0.04, goodMin:{key:'entered',n:5000}, badMin:{key:'entered',n:3000},
+    goodLabel:'Invest more', badLabel:'Fix or stop', show:['entered','converted','valuePer']},
 
   // Experiments board seed. Users add and drag cards in the page; state persists in localStorage.
   experiments:[
-    {id:'e1', status:'todo',  title:'Shorter signup form on Channel B landing page', note:'If we cut 3 fields, lead-to-qualified holds while leads rise 15%.', priority:'high'},
-    {id:'e2', status:'doing', title:'Bid cap on Campaign 3', note:'Caps $/Lead under $70 without losing volume.', priority:'medium'}
+    {id:'e1', status:'todo',  title:'Shorten the first step for Group B', note:'If we remove two fields, engage rate rises 10% with no drop in conversion.', priority:'high'},
+    {id:'e2', status:'doing', title:'Reorder onboarding for Segment 3', note:'Moves conversion rate above 6%.', priority:'medium'}
   ],
 
   // Framework page: the approved measurement framework. tier: North star | Driver | Guardrail | Diagnostic
   framework:{
-    summary:'One north star, a small set of drivers that move it, and guardrails that stop us from gaming it.',
+    summary:'One north star, a few drivers that move it, and guardrails that stop it being gamed.',
     metrics:[
-      {tier:'North star', name:'Return', definition:'Won revenue / spend, same period', source:'CRM + ad platforms', target:'>= 1.2x', cadence:'Weekly'},
-      {tier:'Driver', name:'$/Lead', definition:'Spend / leads', source:'Ad platforms', target:'<= $40', cadence:'Daily'},
-      {tier:'Driver', name:'Qualified %', definition:'Qualified leads / leads', source:'CRM', target:'>= 40%', cadence:'Weekly'},
-      {tier:'Guardrail', name:'$/Won', definition:'Spend / won deals', source:'CRM + ad platforms', target:'<= $600', cadence:'Weekly'}
+      {tier:'North star', name:'Conversion rate', definition:'Converted / entered, same cohort', source:'Product database', target:'>= 8%', cadence:'Weekly'},
+      {tier:'Driver', name:'Engage rate', definition:'Engaged / entered', source:'Product analytics', target:'>= 50%', cadence:'Daily'},
+      {tier:'Driver', name:'Value per entrant', definition:'Value / entered', source:'Billing', target:'>= $3', cadence:'Weekly'},
+      {tier:'Guardrail', name:'Retained share', definition:'Retained / converted', source:'Product analytics', target:'>= 60%', cadence:'Monthly'}
     ],
-    notes:['Revenue lags spend by days to weeks. Judge recent days on leading metrics only.']
+    notes:['Replace every row with the approved framework. Mark thresholds provisional until they survive four weeks of data.']
   }
 };
 // ══ END CONFIG ═════════════════════════════════════════════════════════════
@@ -192,7 +200,7 @@ var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){r
 var ok=function(v){return typeof v==='number'&&isFinite(v);};
 function fmt(v,t){
   if(!ok(v))return '—';
-  if(t==='usd')return (v<0?'-$':'$')+Math.abs(Math.round(v)).toLocaleString();
+  if(t==='usd'){var a=Math.abs(v);return (v<0?'-$':'$')+(a<10?a.toFixed(2):Math.round(a).toLocaleString());}
   if(t==='pct')return (v*100).toFixed(1)+'%';
   if(t==='x')return v.toFixed(2)+'x';
   return Math.round(v).toLocaleString();
@@ -214,7 +222,7 @@ function sum(groups){
 function persist(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v));}catch(e){return null;}}
 
 // Pages
-var PAGES=[['overview','Overview'],['perf','Performance'],['actions','Actions'],['exp','Experiments'],['fw','Framework']];
+var PAGES=[['overview','Overview',DASH.funnel||DASH.kpis,buildOverview],['perf','Performance',DASH.periods,buildPerf],['actions','Actions',DASH.actions&&DASH.periods,buildActions],['exp','Experiments',DASH.experiments,buildExp],['fw','Framework',DASH.framework,buildFw]].filter(function(p){return p[2];});
 function show(id){
   PAGES.forEach(function(p){$('#pg-'+p[0]).classList.toggle('on',p[0]===id);});
   document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.p===id);});
@@ -233,10 +241,9 @@ function renderFunnel(g){
     return '<div class="st"><div class="l">'+esc(s.label)+'</div><div class="bar"><i style="width:'+w+'%;background:'+g.color+'"></i></div><div class="n">'+fmt(n)+'</div><div class="c">'+c+'</div></div>';
   }).join('');
   var last=st[st.length-1].key,ov=T[last]/max*100,o=DASH.funnel.overall;
-  return '<div class="card pad"><div class="ttl" style="color:'+g.color+'">'+esc(g.label)+' &middot; '+fmt(T.spend,'usd')+' spend</div>'+rows
-    +'<div class="sum"><div><div class="k">Overall conversion</div><div class="v"><span class="chip '+grade(ov,{better:'high',green:o.green,yellow:o.yellow})+'">'+ov.toFixed(1)+'%</span></div></div>'
-    +'<div><div class="k">Revenue</div><div class="v">'+fmt(T.revenue,'usd')+'</div></div>'
-    +'<div><div class="k">Return</div><div class="v">'+fmt(T.revenue/T.spend,'x')+'</div></div></div></div>';
+  var sm=(DASH.funnel.summary||[]).map(function(m){return '<div><div class="k">'+esc(m.label)+'</div><div class="v">'+fmt(m.f(T),m.fmt)+'</div></div>';}).join('');
+  return '<div class="card pad"><div class="ttl" style="color:'+g.color+'">'+esc(g.label)+'</div>'+rows
+    +'<div class="sum"><div><div class="k">Overall conversion</div><div class="v"><span class="chip '+grade(ov,{better:'high',green:o.green,yellow:o.yellow})+'">'+ov.toFixed(1)+'%</span></div></div>'+sm+'</div></div>';
 }
 function renderHeat(seg){
   var st=DASH.funnel.stages,g=DASH.funnel.groups.filter(function(x){return x.id===seg.group;})[0],o=DASH.funnel.overall;
@@ -250,13 +257,15 @@ function renderHeat(seg){
   return '<div class="card pad"><div class="ttl">'+esc(g.label)+' by '+esc(DASH.segmentLabel.toLowerCase())+'</div><div class="wrap"><table class="hm">'+head+body+'</table></div></div>';
 }
 function buildOverview(){
-  var G=DASH.funnel.groups,T=sum(G);
-  var strip=DASH.kpis.map(function(k){
-    return '<div class="cell"><div class="k">'+esc(k.label)+'</div><div class="v">'+fmt(k.f(T),k.fmt)+'</div><div class="s">'+G.map(function(g){return esc(g.label)+' '+fmt(k.f(g.totals),k.fmt);}).join(' &middot; ')+'</div></div>';
-  }).join('');
-  $('#pg-overview').innerHTML='<h2>Overview</h2><div class="sub">'+esc(DASH.meta.period)+'</div><div class="strip">'+strip+'</div>'
-    +'<h3>Funnel by channel</h3><div class="grid2">'+G.map(renderFunnel).join('')+'</div>'
-    +'<h3>Conversion by '+esc(DASH.segmentLabel.toLowerCase())+'</h3><div class="grid2">'+DASH.segments.map(renderHeat).join('')+'</div>';
+  var F=DASH.funnel,G=F?F.groups:[],T=F?sum(G):{},out='<h2>Overview</h2><div class="sub">'+esc(DASH.meta.period)+'</div>';
+  if(DASH.kpis&&F){
+    out+='<div class="strip">'+DASH.kpis.map(function(k){
+      return '<div class="cell"><div class="k">'+esc(k.label)+'</div><div class="v">'+fmt(k.f(T),k.fmt)+'</div><div class="s">'+G.map(function(g){return esc(g.label)+' '+fmt(k.f(g.totals),k.fmt);}).join(' &middot; ')+'</div></div>';
+    }).join('')+'</div>';
+  }
+  if(F)out+='<h3>Funnel by '+esc(DASH.groupLabel.toLowerCase())+'</h3><div class="grid2">'+G.map(renderFunnel).join('')+'</div>';
+  if(F&&DASH.segments)out+='<h3>Conversion by '+esc(DASH.segmentLabel.toLowerCase())+'</h3><div class="grid2">'+DASH.segments.map(renderHeat).join('')+'</div>';
+  $('#pg-overview').innerHTML=out;
 }
 
 // Performance
@@ -269,7 +278,7 @@ function table(id,rows,cols,onRow){
     av=ok(av)?av:(s.dir==='asc'?Infinity:-Infinity);bv=ok(bv)?bv:(s.dir==='asc'?Infinity:-Infinity);
     return s.dir==='asc'?av-bv:bv-av;
   });
-  var head='<thead><tr><th tabindex="0" data-k="name">Name</th>'+(rows.length&&rows[0]._g?'<th>Channel</th>':'')+cols.map(function(c){
+  var head='<thead><tr><th tabindex="0" data-k="name">Name</th>'+(rows.length&&rows[0]._g?'<th>'+esc(DASH.groupLabel)+'</th>':'')+cols.map(function(c){
     return '<th class="num'+(s.key===c.key?' sorted':'')+'" tabindex="0" data-k="'+c.key+'">'+esc(c.label)+(s.key===c.key?(s.dir==='asc'?' ↑':' ↓'):'')+'</th>';}).join('')+'</tr></thead>';
   var body='<tbody>'+sorted.map(function(r){return '<tr><td class="nm">'+esc(r.name)+'</td>'+(r._g?'<td><span class="tag">'+esc(r._g)+'</span></td>':'')+cols.map(function(c){return cell(c,r);}).join('')+'</tr>';}).join('')+'</tbody>';
   return {html:head+body,sorted:sorted};
@@ -296,29 +305,29 @@ function buildPerf(){
 
 // Actions
 function buildActions(){
-  var A=DASH.actions,col=DASH.columns.filter(function(c){return c.key===A.metric;})[0];
+  var A=DASH.actions,col=DASH.columns.filter(function(c){return c.key===A.metric;})[0],hi=col.better!=='low';
   var p=DASH.periods.filter(function(x){return x.id===A.period;})[0]||DASH.periods[0];
   var rows=[];p.groups.forEach(function(g){g.rows.forEach(function(r){var c=Object.assign({},r);c._g=g.label;rows.push(c);});});
   var show=A.show.map(function(k){return DASH.columns.filter(function(c){return c.key===k;})[0];}).concat([col]);
-  var scale=rows.filter(function(r){return colVal(col,r)>=A.scaleAt&&r[A.scaleMin.key]>=A.scaleMin.n;});
-  var pull=rows.filter(function(r){return colVal(col,r)<=A.pullAt&&r[A.pullMin.key]>=A.pullMin.n;});
-  var el=$('#pg-actions');
+  var good=rows.filter(function(r){var v=colVal(col,r);return (hi?v>=A.goodAt:v<=A.goodAt)&&r[A.goodMin.key]>=A.goodMin.n;});
+  var bad=rows.filter(function(r){var v=colVal(col,r);return (hi?v<=A.badAt:v>=A.badAt)&&r[A.badMin.key]>=A.badMin.n;});
+  var ge=hi?'&ge;':'&le;',le=hi?'&le;':'&ge;';
   function block(t,id,list,color){
-    SORT[id]=SORT[id]||{key:A.metric,dir:color==='g'?'desc':'asc'};
-    return '<h3 style="color:var(--'+color+')">'+t+' ('+list.length+')</h3><div class="card"><div class="wrap"><table id="'+id+'"></table></div></div>';
+    SORT[id]=SORT[id]||{key:A.metric,dir:(color==='g')===hi?'desc':'asc'};
+    return '<h3 style="color:var(--'+color+')">'+esc(t)+' ('+list.length+')</h3><div class="card"><div class="wrap"><table id="'+id+'"></table></div></div>';
   }
-  el.innerHTML='<h2>Actions</h2><div class="sub">'+esc(p.label)+'. Rules are set in the measurement framework. Review before changing anything live.</div>'
-    +'<div class="net"><div><div class="k">Scale candidates</div><div class="v" style="color:var(--g)">'+scale.length+'</div></div><div><div class="k">Pull-back candidates</div><div class="v" style="color:var(--r)">'+pull.length+'</div></div>'
-    +'<div class="rule">Scale: '+esc(col.label)+' &ge; '+fmt(A.scaleAt,col.fmt)+' and '+A.scaleMin.key+' &ge; '+A.scaleMin.n+'.<br>Pull: '+esc(col.label)+' &le; '+fmt(A.pullAt,col.fmt)+' and '+A.pullMin.key+' &ge; '+A.pullMin.n+'.</div></div>'
-    +block('Scale up','t-scale',scale,'g')+block('Pull back','t-pull',pull,'r');
-  [['t-scale',scale],['t-pull',pull]].forEach(function(x){
+  $('#pg-actions').innerHTML='<h2>Actions</h2><div class="sub">'+esc(p.label)+'. Rules come from the measurement framework. Review before acting.</div>'
+    +'<div class="net"><div><div class="k">'+esc(A.goodLabel)+'</div><div class="v" style="color:var(--g)">'+good.length+'</div></div><div><div class="k">'+esc(A.badLabel)+'</div><div class="v" style="color:var(--r)">'+bad.length+'</div></div>'
+    +'<div class="rule">'+esc(A.goodLabel)+': '+esc(col.label)+' '+ge+' '+fmt(A.goodAt,col.fmt)+' and '+esc(A.goodMin.key)+' &ge; '+fmt(A.goodMin.n)+'.<br>'+esc(A.badLabel)+': '+esc(col.label)+' '+le+' '+fmt(A.badAt,col.fmt)+' and '+esc(A.badMin.key)+' &ge; '+fmt(A.badMin.n)+'.</div></div>'
+    +block(A.goodLabel,'t-good',good,'g')+block(A.badLabel,'t-bad',bad,'r');
+  [['t-good',good],['t-bad',bad]].forEach(function(x){
     function draw(){var t=$('#'+x[0]);t.innerHTML=table(x[0],x[1],show).html;bindSort(t,x[0],draw);}draw();
   });
 }
 
 // Experiments
 var COLS=[['todo','To test'],['doing','Testing'],['done','Evaluated'],['completed','Completed']];
-var XKEY='dash-exp-'+DASH.meta.title,CARDS=persist(XKEY)||DASH.experiments.slice(),drag=null;
+var XKEY='dash-exp-'+DASH.meta.title,CARDS=persist(XKEY)||(DASH.experiments||[]).slice(),drag=null;
 function buildExp(){
   var el=$('#pg-exp');
   el.innerHTML='<h2>Experiments</h2><div class="sub">Log what you change and what you expect. Drag cards between columns. Saved in this browser.</div>'
@@ -359,7 +368,7 @@ if(DASH.meta.sample)$('#sample').style.display='block';
 $('#main').innerHTML=PAGES.map(function(p){return '<section class="page" id="pg-'+p[0]+'"></section>';}).join('');
 $('#nav').innerHTML=PAGES.map(function(p){return '<button data-p="'+p[0]+'">'+p[1]+'</button>';}).join('');
 $('#nav').onclick=function(e){var b=e.target.closest('button');if(b)show(b.dataset.p);};
-buildOverview();buildPerf();buildActions();buildExp();buildFw();show('overview');
+PAGES.forEach(function(p){p[3]();});show(PAGES[0][0]);
 </script>
 </body>
 </html>

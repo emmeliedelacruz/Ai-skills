@@ -18,10 +18,10 @@ One row per stage, first touch to outcome.
 Each stage must be countable the same way every time. If two teams define a stage differently, resolve it here.
 
 ## 3. Drivers (3–5)
-Inputs that move the north star. Each needs a named lever (budget, creative, form length, follow-up speed) and an owner. Prefer rates and costs between adjacent stages.
+Inputs that move the north star. Each needs a named lever the team controls (pricing, onboarding length, response time, staffing, release cadence) and an owner. Prefer rates and costs between adjacent stages.
 
 ## 4. Guardrails (2–3)
-Metrics that must not get worse while chasing the north star (cost per outcome, lead quality, refund rate, stuck/untouched rate).
+Metrics that must not get worse while chasing the north star (cost per outcome, quality, churn or refund rate, backlog age, error rate).
 
 ## 5. Thresholds
 - Baseline from the last 8–12 weeks of the user's own data. Use any external benchmark the user supplies; don't invent one.
@@ -35,14 +35,14 @@ Metrics that must not get worse while chasing the north star (cost per outcome, 
 ## 6. Decision rules
 | Decision | Rule | Minimum volume |
 |---|---|---|
-| Scale | metric ≥ X | N units of volume |
+| Invest / act | metric good side of X | N units of volume |
 | Hold | between | — |
-| Pull back | metric ≤ Y | $/volume floor |
+| Fix / stop | metric bad side of Y | N units of volume |
 
 Minimum volume prevents acting on noise. State it in the same units as the data.
 
 ## 7. Attribution & lag
-Window (e.g. 30 days from first touch), model (first/last/platform-reported vs. CRM), how recent days are treated, and which source wins when systems disagree.
+Window (e.g. 30 days from first touch), how outcomes are credited to their origin, how recent periods are treated while outcomes are still arriving, and which source wins when systems disagree.
 
 ## 8. Cadence & ownership
 Daily / weekly / monthly views, who reads each, who acts.
