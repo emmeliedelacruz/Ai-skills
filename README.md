@@ -56,8 +56,8 @@ Shared creative references:
 
 ## How to use
 
-1. Add this repo to your Claude project (or reference it).
-2. Say, e.g., *"be my growth marketing manager"*, *"be my creative director"*, or *"turn this transcript into demand-gen clips."*
+1. Add this repo to your Claude project (or reference it). To build files, such as the Data Analyst's dashboards, use **Claude Code**, or **ChatGPT with the GitHub plugin** connected to this repo.
+2. Say, e.g., *"be my growth marketing manager"*, *"be my creative director"*, *"be my data analyst, build me a dashboard"*, or *"turn this transcript into demand-gen clips."*
 3. On first run each skill asks a few grouped questions to build the profile it needs. The video editor specifically locks the visual style before transcript analysis.
 4. Claude stores that profile in **your** project/memory and reuses it every time — so the shared skill files stay generic while your setup stays personal.
 
