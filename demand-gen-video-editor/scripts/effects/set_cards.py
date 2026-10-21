@@ -67,7 +67,7 @@ def _mean_color(img, cx, cy, half=.04):
 def _color_blend(img_np, tint_rgb, alpha):
     """CSS mix-blend-mode: color of a flat tint over img (float 0..1 array HxWx3), at opacity alpha."""
     lum = lambda c: .3 * c[..., 0] + .59 * c[..., 1] + .11 * c[..., 2]  # noqa: E731
-    cs = np.broadcast_to(np.array(tint_rgb, np.float32) / 255.0, img_np.shape)
+    cs = np.broadcast_to(np.array(tint_rgb[:3], np.float32) / 255.0, img_np.shape)
     d = (lum(img_np) - lum(cs))[..., None]
     c = cs + d
     l = lum(c)[..., None]
@@ -471,7 +471,7 @@ def eyedropper_grade(img, t, ctx):
     p = _POP(seg(t, 1.5, .3))
     op = clamp01(p) * (1 - EASE(seg(t, 3.1, .3)))
     if op > 0:
-        fpc = _mean_color(img, .42, .60)
+        fpc = cols[4][0]  # the SKIN sample, like the preview's pink dot
         dsz = int(cq(8))
         dotl = ellipse((dsz, dsz), fpc + (255,), (255, 255, 255, 255), max(1, int(cq(.4))))
         _xf_place(out, dotl, cq(38), cq(106), scale=lerp(.4, 1, p), opacity=op)
