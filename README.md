@@ -29,6 +29,7 @@ Your transcript-to-short-form editing workflow. It:
 - **Onboards your visual style first** — upload a screenshot/reference, or review 4 generated style directions for headlines, captions, and end screens.
 - **Finds demand-gen clips** — reviews timestamped transcripts and ranks strong standalone moments up to 45 seconds.
 - **Stops for approval** — no editing starts until you approve the exact clips/timestamps.
+- **Uses a 37-effect library** — kinetic hooks, zoom-throughs, phone mockups, grade reveals and more, with an [animated preview](demand-gen-video-editor/references/video-effect-library.html) and a [text index](demand-gen-video-editor/references/effect-library.md) the editor picks from per clip.
 - **Edits with FFmpeg** — cuts the approved source footage, reframes it for short-form, burns captions, adds headline overlays and end cards, then runs technical QC.
 
 ### 💻 Vibe Coding
