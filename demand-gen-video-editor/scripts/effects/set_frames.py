@@ -226,7 +226,10 @@ def live_markup(img, t, ctx):
     """Footage goes B&W, a hand-drawn circle is drawn round the subject and a note appears with an arrow.
     Slot 0 = note text; slot 1 = circle centre 'cx,cy' in cqw (default 50,102, i.e. the face in a 9:16 talking head)."""
     bw = EASE(seg(t, .2, .4))
-    out = _css_chain(img, [("grayscale", bw), ("contrast", 1 + .15 * bw)]) if bw > 0 else img.copy()
+    if bw >= 1:   # settled state: Rec.709 grayscale then contrast 1.15, via matrix + LUT (fast)
+        out = img.convert("RGB", (.2126, .7152, .0722, 0) * 3).point([min(255, max(0, int((i / 255 - .5) * 1.15 * 255 + 127.5 + .5))) for i in range(256)] * 3)
+    else:
+        out = _css_chain(img, [("grayscale", bw), ("contrast", 1 + .15 * bw)]) if bw > 0 else img.copy()
     try:
         cx, cy = [float(v) for v in ctx.text(1, "50,102").split(",")]
     except ValueError:

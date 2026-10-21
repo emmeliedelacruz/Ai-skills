@@ -549,20 +549,61 @@ def orbit(img, t, ctx):
             _xf_place(out, sh, cq(lx), cq(ly), scale=sc, off=(pad, pad))
 
     # caption: top 42cqw, rise .6s @.2s
-    def build_cap():
-        f1, f2 = font("sans", cq(3.6), 600), font("serif", cq(14), 400, italic=True)
-        l1 = _tl(ctx.text(0, "and you can get the"), f1, (255, 255, 255, 255), shadow=(0, 0, cq(.75), (0, 0, 0, 136)), pad=int(cq(3)))
-        l2 = _tl(ctx.text(1, "cool girl"), f2, _hex("#e8d28a"), shadow=(0, 0, cq(1), (0, 0, 0, 136)), pad=int(cq(3)))
-        return l1, l2, f1.getmetrics(), f2.getmetrics()
-    l1, l2, m1, m2 = ctx.cached("b01_cap" + ctx.text(0) + ctx.text(1), build_cap)
     p = EASE(seg(t, .2, .6))
-    ty = cq(3) * (1 - p)
-    y = cq(42) + ty
-    paste(out, l1, ((W - l1.width) / 2, y - cq(3) - 0), opacity=p)  # glyph box top == y (pad+shadow margin removed below)
-    return _b01_fix(out, l1, l2, y, p, ctx, m1, m2)
+    _caption(out, [(ctx.text(0, "and you can get the"), font("sans", cq(3.6), 600), (255, 255, 255, 255), 0, None, cq(.75)),
+                   (ctx.text(1, "cool girl"), font("serif", cq(14), 400, italic=True), _hex("#e8d28a"), cq(14), None, cq(1))],
+             cq(42) + cq(3) * (1 - p), p)
+    return out
 
 
-def _b01_fix(out, l1, l2, y, p, ctx, m1, m2):
-    # (re-do caption placement precisely: undo the rough paste above by compositing on a fresh copy is unnecessary
-    #  because the first paste is overwritten visually; keep a single call path instead)
+def _caption(out, lines, top, opacity, blur_sigma=0.0):
+    """Centred stack of text lines (text, font, fill, line_height_px or 0 for `normal`, tracking, shadow_sigma) with a
+    soft 0 0 blur #0008 shadow, starting at `top` px."""
+    y = top
+    for txt, fnt, fill, lh, tr, sig in lines:
+        asc, desc = fnt.getmetrics()
+        lh = lh or (asc + desc)
+        lay = text_layer(txt, fnt, fill, tr or 0.0, pad=0, shadow=(0, 0, sig, (0, 0, 0, 136)))
+        m = int(abs(0) + abs(0) + sig * 3)
+        tw = text_w(txt, fnt, tr or 0.0)
+        lay = blur(lay, blur_sigma) if blur_sigma else lay
+        paste(out, lay, ((W - tw) / 2 - m, y + _lh_off(fnt, lh) - m), opacity=opacity)
+        y += lh
+    return out
+
+
+# =========================================================================== B02
+@effect("B02", "Couch wall", duration=3.8, texts=["selling a", "course"], needs_mask=True)
+def couch_wall(img, t, ctx):
+    """A wall of video tiles pops in behind the speaker, then a big caption blurs in.
+    text0 = small lead-in, text1 = big heavy word. Needs a subject matte."""
+    out = css_filter(img, brightness=.8)
+    tw_ = (92 - 3 * 1.4) / 4
+    th_ = tw_ * 12 / 9
+    wd, ht = int(cq(tw_)), int(cq(th_))
+    tint_pairs = [("#6c7a86", "#2c3238"), ("#9a8a74", "#3a3128"), ("#6f8fb8", "#223046")]
+    crops = [(.5, .33), (.35, .30), (.62, .36), (.45, .28), (.55, .40), (.30, .42), (.68, .30), (.5, .45), (.4, .35),
+             (.6, .27), (.33, .33), (.57, .38)]
+    for i in range(12):
+        r, c = divmod(i, 4)
+        p = _POP(seg(t, .2 + i * .07, .35))
+        if t < .2 + i * .07:
+            continue
+        n = i + 1
+        pair = tint_pairs[2] if n % 4 == 3 else tint_pairs[1] if n % 3 == 2 else tint_pairs[0]
+        tile = Image.new("RGBA", (wd, ht))
+        g = gradient((wd, ht), _hex(pair[0]), _hex(pair[1]), 160).convert("RGB")
+        cx, cy = crops[i]
+        tile = Image.blend(g, _crop_frame(img, cx, cy, .42, wd, ht), .55).convert("RGBA")
+        tile.putalpha(rrect((wd, ht), cq(1)).getchannel("A"))
+        bar = rrect((int(wd * .76), max(2, int(ht * .08))), cq(1), (255, 255, 255, 153))
+        tile.alpha_composite(bar, (int(wd * .12), int(ht * .80 - bar.height)))
+        _xf_place(out, tile, cq(4) + c * (tw_ + 1.4) * CQW, cq(10) + r * (th_ + 1.4) * CQW, scale=lerp(.4, 1, p), opacity=clamp01(p))
+    out = Image.composite(img, out, ctx.mask())
+
+    q = EASE(seg(t, 1.0, .6))
+    if q > 0:
+        _caption(out, [(ctx.text(0, "selling a"), font("sans", cq(5), 700), (255, 255, 255, 255), 0, None, cq(.75)),
+                       (ctx.text(1, "course"), font("sans", cq(14), 800), (255, 255, 255, 255), cq(14), -.02 * cq(14), cq(1))],
+                 cq(98), q, blur_sigma=cq(1.6) * (1 - q))
     return out
