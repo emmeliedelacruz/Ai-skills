@@ -55,12 +55,22 @@ Capture these decisions in the Video Style Profile:
 - end-screen duration, layout, logo treatment, CTA pattern, URL/domain behavior
 - brand colors, logo files, fonts, and safe-zone preferences if supplied
 - any banned treatments, words, or effects
+- **effect preferences** from the Video Effect Library: favorite effects, banned effects, and how often to use them (default: at most one per clip)
 
 Default to a simple caption system unless the user chooses otherwise: bold white text, strong dark outline, lower-third placement, maximum 2 lines, no karaoke or word-by-word animation.
 
 Store the confirmed profile in the user's project memory / notes when available. Keep the shared skill generic; never hard-code one company's brand into this file.
 
 See `references/style-onboarding.md` for the profile template and style-option rules.
+
+### Effect library
+
+The skill ships a **Video Effect Library** of 37 motion treatments (kinetic hooks, title-card dives, zoom-throughs, phone mockups, grade reveals, etc.).
+
+- Index and selection rules: `references/effect-library.md` (read this one).
+- Animated previews: `references/video-effect-library.html` (open in a browser; click a tile to replay). Share it with the user so they can pick effects by ID or name.
+
+Always choose effects from this library by ID (e.g. `A05`, `B11`). Do not invent effects that are not in the library unless the user asks for a custom one.
 
 ## Step 2 — Analyze the transcript
 
@@ -101,12 +111,12 @@ The spoken opening matters more than the graphic headline. Use the headline to s
 
 Rank the strongest candidates and use this table:
 
-| Rank | Timestamp | Length | Spoken hook / angle | Why it works | Audience / funnel | Suggested headline | Edit note |
-|---|---|---:|---|---|---|---|---|
+| Rank | Timestamp | Length | Spoken hook / angle | Why it works | Audience / funnel | Suggested headline | Suggested effect (library ID) | Edit note |
+|---|---|---:|---|---|---|---|---|---|
 
 Then name the **top 3–5 clips you would test first**.
 
-For exact scoring guidance, read `references/clip-selection.md`.
+For exact scoring guidance, read `references/clip-selection.md`. Pick each suggested effect from `references/effect-library.md`, matching it to the spoken beat and respecting the Video Style Profile's effect preferences; write "none" when plain headline + captions is stronger.
 
 ## Step 3 — Approval gate
 
@@ -130,6 +140,7 @@ For each approved clip, record:
 - source filename and approved start/end timestamps
 - final format and framing decision
 - headline copy, duration, and placement
+- effect (library ID and name, or "none"), its start/end time within the clip, and any text it needs
 - caption style and any approved copy corrections
 - intentional trims, b-roll, overlays, or reframe notes
 - end-screen CTA and duration, or an explicit “none”
@@ -171,6 +182,16 @@ For 9:16 exports from landscape footage:
 - crop when the subject remains naturally framed
 - use blurred-background fit when cropping would cut off the speaker, slides, demo, or important context
 - avoid stretching footage
+
+### Library effect
+
+If the Edit Map lists an effect, render it with `scripts/render_effect.py` (all 37 library effects are implemented; setup, flags, text slots and mask needs are in `references/effect-library.md`).
+
+1. Cut and frame the clip first (steps above), then run the effect on that cut: `render_effect.py <ID> cut.mp4 fx.mp4 --text ... [--at S] [--mask matte.mp4]`.
+2. Pass the approved copy through `--text`; never ship the preview's sample copy.
+3. For effects marked **mask**, get a subject matte video first. If none can be produced, pick a different effect rather than ship the stand-in matte.
+4. Layer headline, captions and end screen over `fx.mp4` with FFmpeg afterwards. The effect wins any frame it occupies: shift or pause captions around it, and skip the headline if the effect replaces it.
+5. Compare frames with `--frames` contact sheets against the preview tile in `video-effect-library.html` before the full QC pass.
 
 ### Headline overlay
 
@@ -228,6 +249,7 @@ During the frame-by-frame review, check:
 - no subtitle overlaps with the end screen
 - no accidental black, frozen, duplicated, or partially rendered frames
 - no transition glitch, flash, incomplete end-card population, or logo crop
+- any library effect matches its preview's motion and timing, starts/ends on the approved times, and does not obscure the speaker or proof
 - portrait export is exactly the intended dimensions
 - source footage has not been stretched and landscape demos use the approved crop or contained treatment
 - final encode plays through successfully and the delivered file opens in the intended preview surface
@@ -252,5 +274,6 @@ Include the individual downloadable video files. Do not claim a render is finish
 - Do not spend generative-video credits as part of this workflow unless the user explicitly asks for generated footage.
 - Do not begin editing before clip approval.
 - Do not invent transcript lines, timestamps, brand claims, logos, URLs, or CTAs.
+- Use effects from the Video Effect Library only; one per clip by default unless the user says otherwise.
 - Keep brand-specific customization in the user's Video Style Profile, not in this shared skill.
 - If the user supplies a reference screenshot, reproduce its design logic without assuming every visible element is mandatory.

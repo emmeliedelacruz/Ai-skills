@@ -12,6 +12,8 @@ Start with:
 
 Do not ask the user to answer a long brand questionnaire before showing anything visual.
 
+After the caption/headline style is locked, point the user to `video-effect-library.html` (37 animated effects) and ask which, if any, they want as favorites or banned. Skipping is fine: default to picking per clip from the library.
+
 ## If the user uploads a reference
 
 Extract the observable design rules:
@@ -79,6 +81,11 @@ End screen
 - Logo treatment:
 - CTA format:
 - URL/domain:
+
+Effects (see effect-library.md)
+- Favorite effect IDs:
+- Banned effect IDs:
+- Max effects per clip: 1
 
 Brand inputs
 - Colors:
