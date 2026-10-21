@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Dashboard</title>
+<style>
+:root{--ink:#111827;--mute:#6B7280;--faint:#9CA3AF;--line:#E5E7EB;--soft:#F3F4F6;--bg:#F7F8FA;--card:#fff;--accent:#2563EB;--g:#15803D;--gbg:#F0FDF4;--y:#A16207;--ybg:#FFFBEB;--r:#B91C1C;--rbg:#FEF2F2;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5;}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:0 16px;display:flex;align-items:center;height:52px;gap:12px;position:sticky;top:0;z-index:10;}
+.logo{font-weight:700;font-size:15px;flex-shrink:0;}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+nav::-webkit-scrollbar{display:none;}
+nav button{padding:6px 10px;border:0;background:none;border-radius:6px;font:inherit;font-size:12px;font-weight:500;color:var(--mute);cursor:pointer;white-space:nowrap;}
+nav button:hover{background:var(--soft);color:var(--ink);}
+nav button.on{background:var(--soft);color:var(--ink);font-weight:600;}
+nav button:focus-visible,.tab:focus-visible,th:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.hdr-right{margin-left:auto;font-size:11px;color:var(--faint);white-space:nowrap;}
+#sample{display:none;background:var(--ybg);color:var(--y);border-bottom:1px solid #FDE68A;padding:8px 16px;font-size:12px;font-weight:600;}
+.page{display:none;padding:16px;max-width:1440px;margin:0 auto;}
+.page.on{display:block;}
+h2{font-size:18px;font-weight:700;}
+h3{font-size:14px;font-weight:700;margin:20px 0 8px;}
+.sub{font-size:12px;color:var(--faint);margin:2px 0 14px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+.pad{padding:16px;}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+.cell{background:var(--card);padding:12px 14px;}
+.cell .k{font-size:11px;color:var(--mute);}
+.cell .v{font-size:18px;font-weight:700;margin-top:2px;}
+.cell .s{font-size:10px;color:var(--mute);margin-top:2px;}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px;}
+.ttl{font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--soft);}
+.st{display:grid;grid-template-columns:84px 1fr 60px 44px;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #F9FAFB;}
+.st:last-child{border-bottom:0;}
+.st .l{font-size:11px;font-weight:600;color:var(--mute);}
+.bar{height:12px;background:var(--soft);border-radius:6px;overflow:hidden;}
+.bar i{display:block;height:100%;border-radius:6px;}
+.st .n{font-size:11px;font-weight:700;text-align:right;}
+.st .c{font-size:11px;font-weight:700;text-align:right;}
+.sum{display:flex;gap:24px;margin-top:12px;padding-top:12px;border-top:1px solid var(--soft);flex-wrap:wrap;}
+.sum .k{font-size:11px;color:var(--mute);}
+.sum .v{font-size:16px;font-weight:700;}
+.tabs{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;}
+.tab{padding:5px 12px;border-radius:6px;font:inherit;font-size:12px;font-weight:500;color:var(--mute);cursor:pointer;border:1px solid var(--line);background:var(--card);white-space:nowrap;}
+.tab:hover{background:var(--soft);color:var(--ink);}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:#F9FAFB;padding:7px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--mute);border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none;}
+th.num,td.num{text-align:right;font-variant-numeric:tabular-nums;}
+th:hover{color:var(--ink);background:var(--soft);}
+th.sorted{color:var(--accent);}
+td{padding:7px 10px;border-bottom:1px solid var(--soft);white-space:nowrap;}
+tr:last-child td{border-bottom:0;}
+tr:hover td{background:#FAFAFA;}
+td.nm{max-width:240px;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
+.chip{display:inline-block;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:700;}
+.g{background:var(--gbg);color:var(--g);}.y{background:var(--ybg);color:var(--y);}.r{background:var(--rbg);color:var(--r);}
+.none{color:var(--faint);}
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;background:var(--soft);color:var(--mute);}
+.hm{width:100%;border-collapse:separate;border-spacing:2px;font-size:11px;}
+.hm th{background:none;border:0;padding:4px 6px;font-size:10px;text-align:center;cursor:default;}
+.hm th:first-child,.hm td:first-child{text-align:left;}
+.hm td{padding:4px 6px;border-radius:4px;text-align:center;font-weight:600;border:0;}
+.hm td:first-child{font-weight:500;background:none!important;}
+.hm td.g{background:rgba(22,163,74,.08);}.hm td.y{background:rgba(217,119,6,.09);}.hm td.r{background:rgba(220,38,38,.07);}
+.net{display:flex;gap:24px;padding:12px 16px;background:var(--gbg);border:1px solid #BBF7D0;border-radius:8px;margin-bottom:14px;flex-wrap:wrap;}
+.net .k{font-size:11px;color:var(--mute);}.net .v{font-size:18px;font-weight:700;}
+.rule{margin-left:auto;font-size:11px;color:var(--faint);max-width:260px;}
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start;}
+.col{background:#F9FAFB;border-radius:10px;padding:12px;min-height:160px;}
+.col.over{background:#EFF6FF;}
+.col h4{font-size:12px;font-weight:700;margin-bottom:10px;display:flex;gap:6px;align-items:center;}
+.col h4 span{background:var(--line);color:var(--mute);font-size:10px;padding:1px 6px;border-radius:20px;}
+.k-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:7px;cursor:grab;position:relative;}
+.k-card b{font-size:12px;display:block;padding-right:18px;}
+.k-card p{font-size:11px;color:var(--mute);margin-top:4px;}
+.k-card .pr{font-size:10px;font-weight:700;margin-top:6px;display:inline-block;}
+.k-card button{position:absolute;top:6px;right:6px;border:0;background:none;color:var(--faint);cursor:pointer;font-size:12px;}
+.add{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.add input,.add select{padding:7px 10px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:12px;background:var(--card);}
+.add input{flex:1;min-width:180px;}
+.add button{padding:7px 14px;border:0;border-radius:6px;background:var(--ink);color:#fff;font:inherit;font-size:12px;font-weight:600;cursor:pointer;}
+@media(max-width:640px){.board{grid-template-columns:1fr 1fr;}.page{padding:10px;}.grid2{grid-template-columns:1fr;}header{padding:0 10px;}}
+</style>
+</head>
+<body>
+<header><div class="logo" id="logo"></div><nav id="nav"></nav><div class="hdr-right" id="period"></div></header>
+<div id="sample">Sample data. Replace DASH before sharing.</div>
+<main id="main"></main>
+
+<script>
+// ══ CONFIG: the only block the analyst edits ═══════════════════════════════
+// Rules: every number comes from the user's data. Thresholds come from the approved measurement framework.
+const DASH = {
+  meta:{ title:'Acme Growth', period:'Jan 1-26', accent:'#2563EB', sample:true },
+
+  // Metric columns, shared by the Performance and Actions pages. f(row) derives a value; omit f to read row[key].
+  // better:'high'|'low' + green/yellow thresholds drive the chip color. fmt: int | usd | pct | x
+  columns:[
+    {key:'spend',  label:'Spend',   fmt:'usd'},
+    {key:'leads',  label:'Leads',   fmt:'int'},
+    {key:'cpl',    label:'$/Lead',  fmt:'usd', better:'low',  green:40,  yellow:70,  f:r=>r.spend/r.leads},
+    {key:'qual',   label:'Qualified %', fmt:'pct', better:'high', green:40, yellow:25, f:r=>r.qualified/r.leads},
+    {key:'won',    label:'Won',     fmt:'int'},
+    {key:'cac',    label:'$/Won',   fmt:'usd', better:'low',  green:600, yellow:900, f:r=>r.spend/r.won},
+    {key:'revenue',label:'Revenue', fmt:'usd'},
+    {key:'roas',   label:'Return',  fmt:'x',   better:'high', green:1.2, yellow:0.85, f:r=>r.revenue/r.spend}
+  ],
+  defaultSort:{key:'roas', dir:'desc'},
+
+  // Funnel: stage keys must exist in each group's totals. green/yellow = stage-to-stage conversion thresholds.
+  funnel:{
+    stages:[
+      {key:'clicks',    label:'Clicks'},
+      {key:'leads',     label:'Leads',     green:5,  yellow:3},
+      {key:'qualified', label:'Qualified', green:40, yellow:25},
+      {key:'won',       label:'Won',       green:20, yellow:10}
+    ],
+    overall:{green:2, yellow:1}, // first stage to last stage, %
+    groups:[
+      {id:'a', label:'Channel A', color:'#2563EB', totals:{spend:52000, revenue:71000, clicks:30400, leads:1420, qualified:610, won:96}},
+      {id:'b', label:'Channel B', color:'#0F766E', totals:{spend:38000, revenue:35000, clicks:9800,  leads:520,  qualified:170, won:41}}
+    ]
+  },
+  // KPI strip: f(totals) is evaluated for the combined total and per group.
+  kpis:[
+    {label:'Spend',   fmt:'usd', f:t=>t.spend},
+    {label:'Leads',   fmt:'int', f:t=>t.leads},
+    {label:'$/Lead',  fmt:'usd', f:t=>t.spend/t.leads},
+    {label:'Won',     fmt:'int', f:t=>t.won},
+    {label:'$/Won',   fmt:'usd', f:t=>t.spend/t.won},
+    {label:'Revenue', fmt:'usd', f:t=>t.revenue},
+    {label:'Return',  fmt:'x',   f:t=>t.revenue/t.spend}
+  ],
+  // Segment heatmap: one block per group; counts use the same stage keys as the funnel.
+  segmentLabel:'Segment',
+  segments:[
+    {group:'a', rows:[{name:'Segment 1',counts:{clicks:12000,leads:700,qualified:330,won:52}},{name:'Segment 2',counts:{clicks:9000,leads:420,qualified:160,won:30}},{name:'Segment 3',counts:{clicks:9400,leads:300,qualified:120,won:14}}]},
+    {group:'b', rows:[{name:'Segment 1',counts:{clicks:5000,leads:300,qualified:110,won:28}},{name:'Segment 2',counts:{clicks:4800,leads:220,qualified:60,won:13}}]}
+  ],
+
+  // Performance: one tab per period, a sub-tab per group. Rows carry raw fields the columns need.
+  periods:[
+    {id:'month', label:'Month to date', groups:[
+      {id:'a', label:'Channel A', rows:[
+        {name:'Campaign 1', spend:21000, leads:640, qualified:300, won:50, revenue:36000},
+        {name:'Campaign 2', spend:18000, leads:520, qualified:190, won:30, revenue:24000},
+        {name:'Campaign 3', spend:13000, leads:260, qualified:120, won:16, revenue:11000}]},
+      {id:'b', label:'Channel B', rows:[
+        {name:'Campaign 4', spend:22000, leads:330, qualified:120, won:27, revenue:21000},
+        {name:'Campaign 5', spend:16000, leads:190, qualified:50,  won:14, revenue:14000}]}
+    ]},
+    {id:'week', label:'Last 7 days', groups:[
+      {id:'a', label:'Channel A', rows:[
+        {name:'Campaign 1', spend:5400, leads:160, qualified:75, won:12, revenue:9100},
+        {name:'Campaign 2', spend:4600, leads:130, qualified:44, won:7,  revenue:5200},
+        {name:'Campaign 3', spend:3300, leads:60,  qualified:25, won:3,  revenue:2100}]},
+      {id:'b', label:'Channel B', rows:[
+        {name:'Campaign 4', spend:5600, leads:80, qualified:30, won:6, revenue:4800},
+        {name:'Campaign 5', spend:4100, leads:45, qualified:11, won:2, revenue:1700}]}
+    ]}
+  ],
+
+  // Actions: scale/pull lists computed from one period's rows using one column. Mirrors the framework's decision rules.
+  actions:{period:'month', metric:'roas', scaleAt:1.2, pullAt:0.85, scaleMin:{key:'leads',n:3}, pullMin:{key:'spend',n:1000}, show:['spend','leads','cac']},
+
+  // Experiments board seed. Users add and drag cards in the page; state persists in localStorage.
+  experiments:[
+    {id:'e1', status:'todo',  title:'Shorter signup form on Channel B landing page', note:'If we cut 3 fields, lead-to-qualified holds while leads rise 15%.', priority:'high'},
+    {id:'e2', status:'doing', title:'Bid cap on Campaign 3', note:'Caps $/Lead under $70 without losing volume.', priority:'medium'}
+  ],
+
+  // Framework page: the approved measurement framework. tier: North star | Driver | Guardrail | Diagnostic
+  framework:{
+    summary:'One north star, a small set of drivers that move it, and guardrails that stop us from gaming it.',
+    metrics:[
+      {tier:'North star', name:'Return', definition:'Won revenue / spend, same period', source:'CRM + ad platforms', target:'>= 1.2x', cadence:'Weekly'},
+      {tier:'Driver', name:'$/Lead', definition:'Spend / leads', source:'Ad platforms', target:'<= $40', cadence:'Daily'},
+      {tier:'Driver', name:'Qualified %', definition:'Qualified leads / leads', source:'CRM', target:'>= 40%', cadence:'Weekly'},
+      {tier:'Guardrail', name:'$/Won', definition:'Spend / won deals', source:'CRM + ad platforms', target:'<= $600', cadence:'Weekly'}
+    ],
+    notes:['Revenue lags spend by days to weeks. Judge recent days on leading metrics only.']
+  }
+};
+// ══ END CONFIG ═════════════════════════════════════════════════════════════
+
+var $=function(s,el){return (el||document).querySelector(s);};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+var ok=function(v){return typeof v==='number'&&isFinite(v);};
+function fmt(v,t){
+  if(!ok(v))return '—';
+  if(t==='usd')return (v<0?'-$':'$')+Math.abs(Math.round(v)).toLocaleString();
+  if(t==='pct')return (v*100).toFixed(1)+'%';
+  if(t==='x')return v.toFixed(2)+'x';
+  return Math.round(v).toLocaleString();
+}
+function grade(v,c){
+  if(!ok(v)||!c.better||c.green==null)return '';
+  if(c.better==='high')return v>=c.green?'g':v>=c.yellow?'y':'r';
+  return v<=c.green?'g':v<=c.yellow?'y':'r';
+}
+function colVal(c,r){return c.f?c.f(r):r[c.key];}
+function cell(c,r){
+  var v=colVal(c,r),g=grade(v,c);
+  var s=g?'<span class="chip '+g+'">'+fmt(v,c.fmt)+'</span>':fmt(v,c.fmt);
+  return '<td class="num'+(ok(v)?'':' none')+'">'+s+'</td>';
+}
+function sum(groups){
+  var t={};groups.forEach(function(g){Object.keys(g.totals).forEach(function(k){t[k]=(t[k]||0)+g.totals[k];});});return t;
+}
+function persist(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v));}catch(e){return null;}}
+
+// Pages
+var PAGES=[['overview','Overview'],['perf','Performance'],['actions','Actions'],['exp','Experiments'],['fw','Framework']];
+function show(id){
+  PAGES.forEach(function(p){$('#pg-'+p[0]).classList.toggle('on',p[0]===id);});
+  document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.p===id);});
+}
+function tabs(el,items,onPick){
+  el.innerHTML=items.map(function(it,i){return '<button class="tab'+(i?'':' on')+'" data-i="'+i+'">'+esc(it.label)+'</button>';}).join('');
+  el.onclick=function(e){var b=e.target.closest('.tab');if(!b)return;el.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});b.classList.add('on');onPick(+b.dataset.i);};
+}
+
+// Overview
+function renderFunnel(g){
+  var st=DASH.funnel.stages,T=g.totals,max=T[st[0].key]||1;
+  var rows=st.map(function(s,i){
+    var n=T[s.key],w=Math.max(Math.round(n/max*100),2),c='';
+    if(i>0&&T[st[i-1].key]){var p=n/T[st[i-1].key];c='<span class="chip '+grade(p*100,{better:'high',green:s.green,yellow:s.yellow})+'">'+Math.round(p*100)+'%</span>';}
+    return '<div class="st"><div class="l">'+esc(s.label)+'</div><div class="bar"><i style="width:'+w+'%;background:'+g.color+'"></i></div><div class="n">'+fmt(n)+'</div><div class="c">'+c+'</div></div>';
+  }).join('');
+  var last=st[st.length-1].key,ov=T[last]/max*100,o=DASH.funnel.overall;
+  return '<div class="card pad"><div class="ttl" style="color:'+g.color+'">'+esc(g.label)+' &middot; '+fmt(T.spend,'usd')+' spend</div>'+rows
+    +'<div class="sum"><div><div class="k">Overall conversion</div><div class="v"><span class="chip '+grade(ov,{better:'high',green:o.green,yellow:o.yellow})+'">'+ov.toFixed(1)+'%</span></div></div>'
+    +'<div><div class="k">Revenue</div><div class="v">'+fmt(T.revenue,'usd')+'</div></div>'
+    +'<div><div class="k">Return</div><div class="v">'+fmt(T.revenue/T.spend,'x')+'</div></div></div></div>';
+}
+function renderHeat(seg){
+  var st=DASH.funnel.stages,g=DASH.funnel.groups.filter(function(x){return x.id===seg.group;})[0],o=DASH.funnel.overall;
+  var head='<tr><th>'+esc(DASH.segmentLabel)+'</th>'+st.slice(1).map(function(s,i){return '<th>'+esc(st[i].label)+' &rarr; '+esc(s.label)+'</th>';}).join('')+'<th>Overall</th></tr>';
+  var body=seg.rows.map(function(r){
+    var tds=st.slice(1).map(function(s,i){var a=r.counts[st[i].key],b=r.counts[s.key];
+      if(!a)return '<td class="none">—</td>';var p=b/a*100;return '<td class="'+grade(p,{better:'high',green:s.green,yellow:s.yellow})+'">'+Math.round(p)+'%</td>';}).join('');
+    var ov=r.counts[st[st.length-1].key]/r.counts[st[0].key]*100;
+    return '<tr><td>'+esc(r.name)+'</td>'+tds+'<td class="'+grade(ov,{better:'high',green:o.green,yellow:o.yellow})+'">'+ov.toFixed(1)+'%</td></tr>';
+  }).join('');
+  return '<div class="card pad"><div class="ttl">'+esc(g.label)+' by '+esc(DASH.segmentLabel.toLowerCase())+'</div><div class="wrap"><table class="hm">'+head+body+'</table></div></div>';
+}
+function buildOverview(){
+  var G=DASH.funnel.groups,T=sum(G);
+  var strip=DASH.kpis.map(function(k){
+    return '<div class="cell"><div class="k">'+esc(k.label)+'</div><div class="v">'+fmt(k.f(T),k.fmt)+'</div><div class="s">'+G.map(function(g){return esc(g.label)+' '+fmt(k.f(g.totals),k.fmt);}).join(' &middot; ')+'</div></div>';
+  }).join('');
+  $('#pg-overview').innerHTML='<h2>Overview</h2><div class="sub">'+esc(DASH.meta.period)+'</div><div class="strip">'+strip+'</div>'
+    +'<h3>Funnel by channel</h3><div class="grid2">'+G.map(renderFunnel).join('')+'</div>'
+    +'<h3>Conversion by '+esc(DASH.segmentLabel.toLowerCase())+'</h3><div class="grid2">'+DASH.segments.map(renderHeat).join('')+'</div>';
+}
+
+// Performance
+var SORT={};
+function table(id,rows,cols,onRow){
+  var s=SORT[id]||DASH.defaultSort;
+  var c0=cols.filter(function(c){return c.key===s.key;})[0]||cols[0];
+  var sorted=rows.slice().sort(function(a,b){
+    var av=colVal(c0,a),bv=colVal(c0,b);
+    av=ok(av)?av:(s.dir==='asc'?Infinity:-Infinity);bv=ok(bv)?bv:(s.dir==='asc'?Infinity:-Infinity);
+    return s.dir==='asc'?av-bv:bv-av;
+  });
+  var head='<thead><tr><th tabindex="0" data-k="name">Name</th>'+(rows.length&&rows[0]._g?'<th>Channel</th>':'')+cols.map(function(c){
+    return '<th class="num'+(s.key===c.key?' sorted':'')+'" tabindex="0" data-k="'+c.key+'">'+esc(c.label)+(s.key===c.key?(s.dir==='asc'?' ↑':' ↓'):'')+'</th>';}).join('')+'</tr></thead>';
+  var body='<tbody>'+sorted.map(function(r){return '<tr><td class="nm">'+esc(r.name)+'</td>'+(r._g?'<td><span class="tag">'+esc(r._g)+'</span></td>':'')+cols.map(function(c){return cell(c,r);}).join('')+'</tr>';}).join('')+'</tbody>';
+  return {html:head+body,sorted:sorted};
+}
+function bindSort(tbl,id,redraw){
+  function pick(e){var th=e.target.closest('th[data-k]');if(!th||th.dataset.k==='name')return;
+    var k=th.dataset.k,s=SORT[id]||DASH.defaultSort,c=DASH.columns.filter(function(x){return x.key===k;})[0];
+    var dflt=c&&c.better==='low'?'asc':'desc';
+    SORT[id]={key:k,dir:s.key===k?(s.dir==='asc'?'desc':'asc'):dflt};redraw();}
+  tbl.onclick=pick;tbl.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(e);}};
+}
+function buildPerf(){
+  var el=$('#pg-perf');
+  el.innerHTML='<h2>Performance</h2><div class="sub">Click a column to sort. Colors use the thresholds in the Framework tab.</div><div class="tabs" id="pt"></div><div class="tabs" id="gt"></div><div class="card"><div class="wrap"><table id="ptbl"></table></div></div>';
+  var pi=0,gi=0;
+  function draw(){
+    var p=DASH.periods[pi],g=p.groups[gi],id='perf';
+    $('#ptbl').innerHTML=table(id,g.rows,DASH.columns).html;bindSort($('#ptbl'),id,draw);
+  }
+  tabs($('#pt'),DASH.periods,function(i){pi=i;gi=0;groupTabs();draw();});
+  function groupTabs(){tabs($('#gt'),DASH.periods[pi].groups,function(i){gi=i;draw();});}
+  groupTabs();draw();
+}
+
+// Actions
+function buildActions(){
+  var A=DASH.actions,col=DASH.columns.filter(function(c){return c.key===A.metric;})[0];
+  var p=DASH.periods.filter(function(x){return x.id===A.period;})[0]||DASH.periods[0];
+  var rows=[];p.groups.forEach(function(g){g.rows.forEach(function(r){var c=Object.assign({},r);c._g=g.label;rows.push(c);});});
+  var show=A.show.map(function(k){return DASH.columns.filter(function(c){return c.key===k;})[0];}).concat([col]);
+  var scale=rows.filter(function(r){return colVal(col,r)>=A.scaleAt&&r[A.scaleMin.key]>=A.scaleMin.n;});
+  var pull=rows.filter(function(r){return colVal(col,r)<=A.pullAt&&r[A.pullMin.key]>=A.pullMin.n;});
+  var el=$('#pg-actions');
+  function block(t,id,list,color){
+    SORT[id]=SORT[id]||{key:A.metric,dir:color==='g'?'desc':'asc'};
+    return '<h3 style="color:var(--'+color+')">'+t+' ('+list.length+')</h3><div class="card"><div class="wrap"><table id="'+id+'"></table></div></div>';
+  }
+  el.innerHTML='<h2>Actions</h2><div class="sub">'+esc(p.label)+'. Rules are set in the measurement framework. Review before changing anything live.</div>'
+    +'<div class="net"><div><div class="k">Scale candidates</div><div class="v" style="color:var(--g)">'+scale.length+'</div></div><div><div class="k">Pull-back candidates</div><div class="v" style="color:var(--r)">'+pull.length+'</div></div>'
+    +'<div class="rule">Scale: '+esc(col.label)+' &ge; '+fmt(A.scaleAt,col.fmt)+' and '+A.scaleMin.key+' &ge; '+A.scaleMin.n+'.<br>Pull: '+esc(col.label)+' &le; '+fmt(A.pullAt,col.fmt)+' and '+A.pullMin.key+' &ge; '+A.pullMin.n+'.</div></div>'
+    +block('Scale up','t-scale',scale,'g')+block('Pull back','t-pull',pull,'r');
+  [['t-scale',scale],['t-pull',pull]].forEach(function(x){
+    function draw(){var t=$('#'+x[0]);t.innerHTML=table(x[0],x[1],show).html;bindSort(t,x[0],draw);}draw();
+  });
+}
+
+// Experiments
+var COLS=[['todo','To test'],['doing','Testing'],['done','Evaluated'],['completed','Completed']];
+var XKEY='dash-exp-'+DASH.meta.title,CARDS=persist(XKEY)||DASH.experiments.slice(),drag=null;
+function buildExp(){
+  var el=$('#pg-exp');
+  el.innerHTML='<h2>Experiments</h2><div class="sub">Log what you change and what you expect. Drag cards between columns. Saved in this browser.</div>'
+    +'<form class="add" id="xf"><input id="xt" placeholder="What are we testing?" required><input id="xn" placeholder="Hypothesis: if we do X, we expect Y because Z"><select id="xp"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select><button>Add</button></form>'
+    +'<div class="board">'+COLS.map(function(c){return '<div class="col" data-c="'+c[0]+'"><h4>'+c[1]+' <span id="n-'+c[0]+'"></span></h4><div id="l-'+c[0]+'"></div></div>';}).join('')+'</div>';
+  $('#xf').onsubmit=function(e){e.preventDefault();CARDS.push({id:'x'+Date.now(),status:'todo',title:$('#xt').value,note:$('#xn').value,priority:$('#xp').value});persist(XKEY,CARDS);this.reset();drawExp();};
+  el.querySelectorAll('.col').forEach(function(col){
+    col.ondragover=function(e){e.preventDefault();col.classList.add('over');};
+    col.ondragleave=function(){col.classList.remove('over');};
+    col.ondrop=function(e){e.preventDefault();col.classList.remove('over');var c=CARDS.filter(function(x){return x.id===drag;})[0];if(c){c.status=col.dataset.c;persist(XKEY,CARDS);drawExp();}};
+  });
+  drawExp();
+}
+function drawExp(){
+  var pc={high:'var(--r)',medium:'var(--y)',low:'var(--g)'};
+  COLS.forEach(function(c){
+    var list=CARDS.filter(function(x){return x.status===c[0];});
+    $('#n-'+c[0]).textContent=list.length;
+    $('#l-'+c[0]).innerHTML=list.map(function(x){return '<div class="k-card" draggable="true" data-id="'+esc(x.id)+'"><b>'+esc(x.title)+'</b>'+(x.note?'<p>'+esc(x.note)+'</p>':'')+'<span class="pr" style="color:'+pc[x.priority]+'">'+esc(x.priority)+' priority</span><button aria-label="Delete" data-del="'+esc(x.id)+'">&times;</button></div>';}).join('');
+  });
+  document.querySelectorAll('.k-card').forEach(function(k){k.ondragstart=function(){drag=k.dataset.id;};});
+  document.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){CARDS=CARDS.filter(function(x){return x.id!==b.dataset.del;});persist(XKEY,CARDS);drawExp();};});
+}
+
+// Framework
+function buildFw(){
+  var F=DASH.framework;
+  $('#pg-fw').innerHTML='<h2>Measurement framework</h2><div class="sub">'+esc(F.summary)+'</div><div class="card"><div class="wrap"><table><thead><tr><th>Tier</th><th>Metric</th><th>Definition</th><th>Source</th><th>Target</th><th>Cadence</th></tr></thead><tbody>'
+    +F.metrics.map(function(m){return '<tr><td><span class="tag">'+esc(m.tier)+'</span></td><td class="nm">'+esc(m.name)+'</td><td>'+esc(m.definition)+'</td><td>'+esc(m.source)+'</td><td>'+esc(m.target)+'</td><td>'+esc(m.cadence)+'</td></tr>';}).join('')
+    +'</tbody></table></div></div>'+(F.notes&&F.notes.length?'<h3>Data notes</h3><div class="card pad"><ul style="padding-left:18px">'+F.notes.map(function(n){return '<li>'+esc(n)+'</li>';}).join('')+'</ul></div>':'');
+}
+
+// Boot
+document.title=DASH.meta.title+' Dashboard';
+document.documentElement.style.setProperty('--accent',DASH.meta.accent);
+$('#logo').textContent=DASH.meta.title;$('#period').textContent=DASH.meta.period;
+if(DASH.meta.sample)$('#sample').style.display='block';
+$('#main').innerHTML=PAGES.map(function(p){return '<section class="page" id="pg-'+p[0]+'"></section>';}).join('');
+$('#nav').innerHTML=PAGES.map(function(p){return '<button data-p="'+p[0]+'">'+p[1]+'</button>';}).join('');
+$('#nav').onclick=function(e){var b=e.target.closest('button');if(b)show(b.dataset.p);};
+buildOverview();buildPerf();buildActions();buildExp();buildFw();show('overview');
+</script>
+</body>
+</html>

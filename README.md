@@ -38,6 +38,13 @@ A folder of three skills for building interfaces that look designed, not templat
 - **[Premium Pages](vibe-coding/premium-pages/SKILL.md)**: the layout recipe for any multi-section page. It covers a hero with a live product preview, alternating section backgrounds, photo-backed sections, three levels of hierarchy, high-contrast pricing and copy rules.
 - **[Software Landing Page](vibe-coding/software-landing-page/SKILL.md)**: the landing page recipe for software products. It shows the product working, uses an interactive product tour instead of crammed feature grids, leads pricing with the outcome, and cuts any section that does nothing.
 
+### 📊 Data Analyst
+Your measurement and dashboard analyst. See **[data-analyst/SKILL.md](data-analyst/SKILL.md)**. It:
+- **Onboards in one message** — goal, funnel, data sources, audience, cuts and targets.
+- **Designs the measurement framework** — north star, funnel definitions, drivers, guardrails, thresholds and scale/pull rules ([method](data-analyst/references/measurement-framework.md)). Nothing gets built until you approve it.
+- **Builds the dashboard** from a single-file, config-driven [HTML template](data-analyst/templates/dashboard-template.html): overview funnel, segment heatmap, sortable performance tables, scale/pull actions, an experiments board and the framework itself.
+- **Refreshes and audits** — re-pulls data, re-runs the checks and flags what moved.
+
 ### ⚖️ Legal Assistant
 A folder of skills for a law firm's AI employee. See **[legal-assistant/README.md](legal-assistant/README.md)**.
 - **[Daily Inbox Brief](legal-assistant/daily-inbox-brief/SKILL.md)**: a weekday-morning Gmail scan that returns a prioritized brief with replies drafted for approval.
