@@ -306,13 +306,14 @@ function buildActions(){
   var good=rows.filter(function(r){var v=colVal(col,r);return (hi?v>=A.goodAt:v<=A.goodAt)&&r[A.goodMin.key]>=A.goodMin.n;});
   var bad=rows.filter(function(r){var v=colVal(col,r);return (hi?v<=A.badAt:v>=A.badAt)&&r[A.badMin.key]>=A.badMin.n;});
   var ge=hi?'&ge;':'&le;',le=hi?'&le;':'&ge;';
+  function lbl(k){var c=DASH.columns.filter(function(x){return x.key===k;})[0];return c?c.label.toLowerCase():k;}
   function block(t,id,list,color){
     SORT[id]=SORT[id]||{key:A.metric,dir:(color==='g')===hi?'desc':'asc'};
     return '<h3 style="color:var(--'+color+')">'+esc(t)+' ('+list.length+')</h3><div class="card"><div class="wrap"><table id="'+id+'"></table></div></div>';
   }
   $('#pg-actions').innerHTML='<h2>Actions</h2><div class="sub">'+esc(p.label)+'. Rules come from the measurement framework. Review before acting.</div>'
     +'<div class="net"><div><div class="k">'+esc(A.goodLabel)+'</div><div class="v" style="color:var(--g)">'+good.length+'</div></div><div><div class="k">'+esc(A.badLabel)+'</div><div class="v" style="color:var(--r)">'+bad.length+'</div></div>'
-    +'<div class="rule">'+esc(A.goodLabel)+': '+esc(col.label)+' '+ge+' '+fmt(A.goodAt,col.fmt)+' and '+esc(A.goodMin.key)+' &ge; '+fmt(A.goodMin.n)+'.<br>'+esc(A.badLabel)+': '+esc(col.label)+' '+le+' '+fmt(A.badAt,col.fmt)+' and '+esc(A.badMin.key)+' &ge; '+fmt(A.badMin.n)+'.</div></div>'
+    +'<div class="rule">'+esc(A.goodLabel)+': '+esc(col.label)+' '+ge+' '+fmt(A.goodAt,col.fmt)+' and '+esc(lbl(A.goodMin.key))+' &ge; '+fmt(A.goodMin.n)+'.<br>'+esc(A.badLabel)+': '+esc(col.label)+' '+le+' '+fmt(A.badAt,col.fmt)+' and '+esc(lbl(A.badMin.key))+' &ge; '+fmt(A.badMin.n)+'.</div></div>'
     +block(A.goodLabel,'t-good',good,'g')+block(A.badLabel,'t-bad',bad,'r');
   [['t-good',good],['t-bad',bad]].forEach(function(x){
     function draw(){var t=$('#'+x[0]);t.innerHTML=table(x[0],x[1],show).html;bindSort(t,x[0],draw);}draw();

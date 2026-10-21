@@ -43,7 +43,7 @@ Your measurement and dashboard analyst, for any funnel or KPI tree (product, rev
 - **Onboards in one message** — goal, funnel, data sources, audience, cuts and targets.
 - **Designs the measurement framework** — north star, funnel definitions, drivers, guardrails, thresholds and decision rules ([method](data-analyst/references/measurement-framework.md)). Nothing gets built until you approve it.
 - **Builds the dashboard** from a single-file, config-driven [HTML template](data-analyst/templates/dashboard-template.html): overview funnel, segment heatmap, sortable performance tables, act/hold/fix lists, an experiments board and the framework itself.
-- **Ships with a worked example** — a [three-store retailer dashboard](data-analyst/examples/retail-store-dashboard.html) with fictional data.
+- **Ships with worked examples** (fictional data): a [retail store group](data-analyst/examples/retail-store-dashboard.html), a [hotel group](data-analyst/examples/hotel-dashboard.html) and a [cafe](data-analyst/examples/cafe-dashboard.html).
 - **Refreshes and audits** — re-pulls data, re-runs the checks and flags what moved.
 
 ### ⚖️ Legal Assistant
