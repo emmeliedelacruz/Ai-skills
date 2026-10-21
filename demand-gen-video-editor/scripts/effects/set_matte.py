@@ -248,22 +248,16 @@ def _b13_layers(ctx):
     return L
 
 
-def _person_sticker(img, m):
-    """Cut-out at scale 1.5 (origin 30% 100%) with a white 'paper' border and soft drop shadow."""
+def _paste_sticker(out, img, m):
+    """Cut-out at scale 1.5 (origin 30% 100%) with a white 'paper' border and soft drop shadow, pasted onto out."""
     zi = zoom(img, 1.5, .3, 1.0)
     zm = zoom(m.convert("L"), 1.5, .3, 1.0)
     edge = _dilate_cross(zm, cq(.7))
-    shape = Image.new("RGBA", (W, H), (255, 255, 255, 0))
-    shape.putalpha(edge)
-    white = Image.new("RGBA", (W, H), (255, 255, 255, 255))
-    white.putalpha(edge)
-    shadow_a = edge.filter(ImageFilter.GaussianBlur(cq(1.6)))
-    shadow_a = shadow_a.point(lambda v: int(v * .4))
-    sh = Image.new("RGBA", (W, H), (0, 0, 0, 255))
-    sh.putalpha(shadow_a)
-    sh_shifted = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    sh_shifted.paste(sh, (0, int(cq(1))))
-    return sh_shifted, white, _cutout(zi, zm)
+    half = edge.resize((W // 2, H // 2), Image.BILINEAR).filter(ImageFilter.GaussianBlur(cq(1.6) / 2))
+    shadow = half.resize((W, H), Image.BILINEAR).point(lambda v: int(v * .4))
+    out.paste((0, 0, 0), (0, int(cq(1))), shadow)
+    out.paste((255, 255, 255), (0, 0), edge)
+    out.paste(zi, (0, 0), zm)
 
 
 @effect("B13", "Paper cut", duration=4.6, texts=["100%"], needs_mask=True)
@@ -324,10 +318,7 @@ def paper_cut(img, t, ctx):
         ov = ov.resize((W, int(cq(40))), Image.LANCZOS)
         paste(out, ov, (0, y0))
 
-    sh, white, person = _person_sticker(img, ctx.mask())
-    paste(out, sh)
-    paste(out, white)
-    paste(out, person)
+    _paste_sticker(out, img, ctx.mask())
     return out
 
 
