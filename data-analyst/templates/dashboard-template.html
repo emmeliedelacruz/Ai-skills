@@ -31,6 +31,7 @@ h3{font-size:14px;font-weight:700;margin:20px 0 8px;}
 .cell .v{font-size:18px;font-weight:700;margin-top:2px;}
 .cell .s{font-size:10px;color:var(--mute);margin-top:2px;}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px;}
+.grid2.wide{grid-template-columns:repeat(auto-fit,minmax(520px,1fr));}
 .ttl{font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--soft);}
 .st{display:grid;grid-template-columns:84px 1fr 60px 44px;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #F9FAFB;}
 .st:last-child{border-bottom:0;}
@@ -83,7 +84,7 @@ td.nm{max-width:240px;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
 .add input,.add select{padding:7px 10px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:12px;background:var(--card);}
 .add input{flex:1;min-width:180px;}
 .add button{padding:7px 14px;border:0;border-radius:6px;background:var(--ink);color:#fff;font:inherit;font-size:12px;font-weight:600;cursor:pointer;}
-@media(max-width:640px){.board{grid-template-columns:1fr 1fr;}.page{padding:10px;}.grid2{grid-template-columns:1fr;}header{padding:0 10px;}}
+@media(max-width:640px){.board{grid-template-columns:1fr 1fr;}.page{padding:10px;}.grid2,.grid2.wide{grid-template-columns:1fr;}header{padding:0 10px;}}
 </style>
 </head>
 <body>
@@ -123,7 +124,7 @@ const DASH = {
       {key:'converted', label:'Converted', green:15, yellow:10},
       {key:'retained',  label:'Retained',  green:60, yellow:40}
     ],
-    overall:{green:5, yellow:3}, // first stage to last stage, %
+    overall:{green:5, yellow:3}, // first stage to last stage, %. Optional overallLabel names it.
     summary:[ // extra figures at the bottom of each funnel card; f(totals)
       {label:'Value',            fmt:'usd', f:t=>t.value},
       {label:'Value per entrant',fmt:'usd', f:t=>t.value/t.entered}
@@ -243,7 +244,7 @@ function renderFunnel(g){
   var last=st[st.length-1].key,ov=T[last]/max*100,o=DASH.funnel.overall;
   var sm=(DASH.funnel.summary||[]).map(function(m){return '<div><div class="k">'+esc(m.label)+'</div><div class="v">'+fmt(m.f(T),m.fmt)+'</div></div>';}).join('');
   return '<div class="card pad"><div class="ttl" style="color:'+g.color+'">'+esc(g.label)+'</div>'+rows
-    +'<div class="sum"><div><div class="k">Overall conversion</div><div class="v"><span class="chip '+grade(ov,{better:'high',green:o.green,yellow:o.yellow})+'">'+ov.toFixed(1)+'%</span></div></div>'+sm+'</div></div>';
+    +'<div class="sum"><div><div class="k">'+esc(DASH.funnel.overallLabel||'Overall conversion')+'</div><div class="v"><span class="chip '+grade(ov,{better:'high',green:o.green,yellow:o.yellow})+'">'+ov.toFixed(1)+'%</span></div></div>'+sm+'</div></div>';
 }
 function renderHeat(seg){
   var st=DASH.funnel.stages,g=DASH.funnel.groups.filter(function(x){return x.id===seg.group;})[0],o=DASH.funnel.overall;
@@ -264,7 +265,7 @@ function buildOverview(){
     }).join('')+'</div>';
   }
   if(F)out+='<h3>Funnel by '+esc(DASH.groupLabel.toLowerCase())+'</h3><div class="grid2">'+G.map(renderFunnel).join('')+'</div>';
-  if(F&&DASH.segments)out+='<h3>Conversion by '+esc(DASH.segmentLabel.toLowerCase())+'</h3><div class="grid2">'+DASH.segments.map(renderHeat).join('')+'</div>';
+  if(F&&DASH.segments)out+='<h3>Conversion by '+esc(DASH.segmentLabel.toLowerCase())+'</h3><div class="grid2 wide">'+DASH.segments.map(renderHeat).join('')+'</div>';
   $('#pg-overview').innerHTML=out;
 }
 
@@ -364,7 +365,7 @@ function buildFw(){
 document.title=DASH.meta.title+' Dashboard';
 document.documentElement.style.setProperty('--accent',DASH.meta.accent);
 $('#logo').textContent=DASH.meta.title;$('#period').textContent=DASH.meta.period;
-if(DASH.meta.sample)$('#sample').style.display='block';
+if(DASH.meta.sample){$('#sample').textContent=DASH.meta.sampleNote||'Sample data. Replace DASH before sharing.';$('#sample').style.display='block';}
 $('#main').innerHTML=PAGES.map(function(p){return '<section class="page" id="pg-'+p[0]+'"></section>';}).join('');
 $('#nav').innerHTML=PAGES.map(function(p){return '<button data-p="'+p[0]+'">'+p[1]+'</button>';}).join('');
 $('#nav').onclick=function(e){var b=e.target.closest('button');if(b)show(b.dataset.p);};

@@ -52,6 +52,7 @@ Method and template: `references/measurement-framework.md`.
 
 ## Mode B — Build the dashboard
 Template: `templates/dashboard-template.html` (single file, no dependencies, config-driven).
+Worked example (multi-location retail store): `examples/retail-store-dashboard.html`. Match its config shape.
 
 **Steps**
 1. Confirm an approved framework exists. If not, run Mode A.
