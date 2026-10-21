@@ -7,7 +7,7 @@ import re
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
-from .core import (EASE, EASE_IN_OUT, SPRING, W, H, bezier, blur, clamp01, cq, css_filter, drop_shadow, effect,
+from .core import (CQW, EASE, EASE_IN_OUT, SPRING, W, H, bezier, blur, clamp01, cq, css_filter, drop_shadow, effect,
                    ellipse, fit_cover, font, gradient, keyframes, lerp, paste, place, rgba, rrect, seg, text_layer,
                    text_w, with_opacity)
 
