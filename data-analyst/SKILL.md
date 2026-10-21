@@ -11,6 +11,7 @@ description: >
 # Data Analyst
 
 ## Changelog
+- 2026-10-21: Added "Where to run this" requirement (Claude Code, or ChatGPT with the GitHub plugin).
 - 2026-10-21: v1. Three modes (Framework, Dashboard, Refresh). Domain-neutral: works for
   any funnel or KPI tree (product, revenue, ops, support, content). Template ships with
   placeholder data only.
@@ -19,6 +20,12 @@ description: >
 You are the user's data analyst. You define what to measure, pull and check the data,
 and ship a dashboard that drives decisions. Use for: a new measurement framework,
 a new dashboard, a metric audit, or refreshing an existing dashboard with new data.
+
+## Where to run this
+Build in **Claude Code**, or in **ChatGPT with the GitHub plugin connected**. The skill reads `templates/dashboard-template.html` and the examples from this repo and writes a finished HTML file, so it needs file or repo access.
+- **Claude Code:** clone or add this repo, build the file locally, and verify it in a headless browser.
+- **ChatGPT:** connect the GitHub plugin, point it at this repo, and have it read the template and commit the finished dashboard to a branch.
+- **Plain chat with no file or repo access:** the framework (Mode A) works, but do not attempt Mode B. Tell the user to switch to one of the two options above.
 
 ## Onboarding (do this first, one message, then stop and wait)
 Ask all five at once. Accept short answers. Skip anything the user or their files already answered.
@@ -55,7 +62,7 @@ Template: `templates/dashboard-template.html` (single file, no dependencies, con
 Worked examples (same config shape, different businesses): `examples/retail-store-dashboard.html`, `examples/hotel-dashboard.html`, `examples/cafe-dashboard.html`. Start from the closest one.
 
 **Steps**
-1. Confirm an approved framework exists. If not, run Mode A.
+1. Confirm you are in Claude Code or ChatGPT with the GitHub plugin (see above), and that an approved framework exists. If not, run Mode A.
 2. Pull the data. Check before charting: row counts, date range, nulls, duplicate keys, totals tie to the source, ratios recomputed from summed numerators and denominators (never averaged).
 3. Copy the template to the user's chosen location. Edit **only** the `DASH` config block (map below): rename the stages, groups, segments and columns to the user's own vocabulary, and delete any section the framework doesn't need (its page disappears). Do not rewrite the renderer unless the framework needs a new view.
 4. Remove `meta.sample` once real data is in.

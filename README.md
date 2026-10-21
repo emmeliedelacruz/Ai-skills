@@ -39,7 +39,7 @@ A folder of three skills for building interfaces that look designed, not templat
 - **[Software Landing Page](vibe-coding/software-landing-page/SKILL.md)**: the landing page recipe for software products. It shows the product working, uses an interactive product tour instead of crammed feature grids, leads pricing with the outcome, and cuts any section that does nothing.
 
 ### 📊 Data Analyst
-Your measurement and dashboard analyst, for any funnel or KPI tree (product, revenue, ops, support, content). See **[data-analyst/SKILL.md](data-analyst/SKILL.md)**. It:
+Your measurement and dashboard analyst, for any funnel or KPI tree (product, revenue, ops, support, content). See **[data-analyst/SKILL.md](data-analyst/SKILL.md)**. Build dashboards in **Claude Code**, or in **ChatGPT with the GitHub plugin**; plain chat can draft the framework only. It:
 - **Onboards in one message** — goal, funnel, data sources, audience, cuts and targets.
 - **Designs the measurement framework** — north star, funnel definitions, drivers, guardrails, thresholds and decision rules ([method](data-analyst/references/measurement-framework.md)). Nothing gets built until you approve it.
 - **Builds the dashboard** from a single-file, config-driven [HTML template](data-analyst/templates/dashboard-template.html): overview funnel, segment heatmap, sortable performance tables, act/hold/fix lists, an experiments board and the framework itself.
