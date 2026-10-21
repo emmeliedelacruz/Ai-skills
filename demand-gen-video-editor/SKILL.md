@@ -185,7 +185,13 @@ For 9:16 exports from landscape footage:
 
 ### Library effect
 
-If the Edit Map lists an effect, build it from its entry in `references/effect-library.md` and the matching tile in `references/video-effect-library.html`, using the user's original footage as the base. Match the preview's motion, timing, and look; adapt colors and type to the Video Style Profile. Keep headline, captions, and the effect from colliding; the effect wins the frame it occupies and captions move or pause around it.
+If the Edit Map lists an effect, render it with `scripts/render_effect.py` (all 37 library effects are implemented; setup, flags, text slots and mask needs are in `references/effect-library.md`).
+
+1. Cut and frame the clip first (steps above), then run the effect on that cut: `render_effect.py <ID> cut.mp4 fx.mp4 --text ... [--at S] [--mask matte.mp4]`.
+2. Pass the approved copy through `--text`; never ship the preview's sample copy.
+3. For effects marked **mask**, get a subject matte video first. If none can be produced, pick a different effect rather than ship the stand-in matte.
+4. Layer headline, captions and end screen over `fx.mp4` with FFmpeg afterwards. The effect wins any frame it occupies: shift or pause captions around it, and skip the headline if the effect replaces it.
+5. Compare frames with `--frames` contact sheets against the preview tile in `video-effect-library.html` before the full QC pass.
 
 ### Headline overlay
 
