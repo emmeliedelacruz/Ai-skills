@@ -11,6 +11,7 @@ description: >
 # Data Analyst
 
 ## Changelog
+- 2026-10-22: Automation first. Connector discovery, source map, `data.js` split, scheduled refresh + analysis routine, stale-data banner, insights panel. Manual updates are now an interim exception.
 - 2026-10-21: Added "Where to run this" requirement (Claude Code, or ChatGPT with the GitHub plugin).
 - 2026-10-21: v1. Three modes (Framework, Dashboard, Refresh). Domain-neutral: works for
   any funnel or KPI tree (product, revenue, ops, support, content). Template ships with
@@ -32,8 +33,8 @@ Ask all five at once. Accept short answers. Skip anything the user or their file
 
 1. **Goal** — What do you sell, and what one outcome matters most right now (revenue, activations, signups, retention)?
 2. **Funnel** — Stages from first touch to that outcome, in your words. Where is each stage tracked?
-3. **Data** — Where does the data live (analytics tool, warehouse/BI, CRM, billing, support or ops system, spreadsheet)? Connect it, or upload a recent export.
-4. **Audience** — Who reads the dashboard, how often, and what decision should it drive?
+3. **Data** — Which tools hold the data (analytics, warehouse/BI, CRM, billing, support or ops system, ad platforms, spreadsheets)? Name every source. You find and connect the connectors; the user should never have to export or paste data on a schedule.
+4. **Audience** — Who reads the dashboard, how often, what decision should it drive, and where should it live and be delivered (URL, Slack channel, email)?
 5. **Cuts & targets** — How do you slice it (team, region, segment, plan, cohort, source)? Any targets or thresholds you already use?
 
 Store the answers as an **Analytics Profile** in the user's project memory and reuse it every run. Update it when corrected. Never write it into this file.
@@ -42,6 +43,15 @@ If the user already has a dashboard or report, ask for it and match its metric n
 
 ## Approval line
 Framework first, dashboard second. Do not build until the user approves the framework (thresholds and decision rules included). Never fabricate numbers: every value on the dashboard comes from the user's data, and the template's sample banner stays on until real data replaces it.
+
+---
+
+## Automation first (non-negotiable)
+Never make the user update the dashboard. The goal is an agent on a schedule that pulls the data, analyzes it, publishes it and tells the right people. Full method: `references/automation.md`.
+- **Find connectors before anything else.** For each source, check connected tools, then search the connector registry or plugin list and ask the user to connect what exists. Use API or database access, then scheduled exports to a known location. Manual upload is the last resort.
+- **Every metric has a pull method that runs without a person.** A manual source is a named gap: ship it as interim, and list the exact automation that replaces it under Leftovers.
+- **Ship the routine with the dashboard.** A dashboard without a scheduled refresh is not finished.
+- **Stale beats wrong.** If a source fails or a check fails, keep the last good data, show the stale banner and alert the user.
 
 ---
 
@@ -55,7 +65,8 @@ Method and template: `references/measurement-framework.md`.
 4. Set green/yellow/red thresholds from the data (baseline), marked provisional.
 5. Write decision rules (scale / hold / pull) with minimum volume.
 6. State attribution window and data lag.
-7. Present the framework table + open questions. Wait for sign-off.
+7. Build the source map: for each metric, the connector or automated pull that feeds it (`references/automation.md`). Flag any manual source as a gap.
+8. Present the framework table, source map and open questions. Wait for sign-off.
 
 ## Mode B — Build the dashboard
 Template: `templates/dashboard-template.html` (single file, no dependencies, config-driven).
@@ -63,11 +74,13 @@ Worked examples (same config shape, different businesses): `examples/retail-stor
 
 **Steps**
 1. Confirm you are in Claude Code or ChatGPT with the GitHub plugin (see above), and that an approved framework exists. If not, run Mode A.
-2. Pull the data. Check before charting: row counts, date range, nulls, duplicate keys, totals tie to the source, ratios recomputed from summed numerators and denominators (never averaged).
+2. Pull the data through the connectors in the source map, not from a pasted export. Check before charting: row counts, date range, nulls, duplicate keys, totals tie to the source, ratios recomputed from summed numerators and denominators (never averaged).
 3. Copy the template to the user's chosen location. Edit **only** the `DASH` config block (map below): rename the stages, groups, segments and columns to the user's own vocabulary, and delete any section the framework doesn't need (its page disappears). Do not rewrite the renderer unless the framework needs a new view.
 4. Remove `meta.sample` once real data is in.
 5. Verify: open in a headless browser, click every tab and sort, confirm zero console errors, and spot-check three numbers against the source.
-6. Deliver the file. If the session can publish artifacts, publish and give the link. State the data window and any caveats.
+6. Move the numbers into `data.js` (copy `templates/data.js`; definitions stay in the HTML). Add the first set of `insights`.
+7. Set up the routine: a scheduled agent that runs the refresh in `references/automation.md` (Claude Code routine, or a ChatGPT scheduled task with the GitHub plugin). Confirm the schedule, host URL and delivery channel.
+8. Deliver the URL or file. State the data window, the refresh schedule and any manual-source gaps.
 
 **Config map**
 
@@ -84,10 +97,12 @@ Worked examples (same config shape, different businesses): `examples/retail-stor
 
 UI rules for any change to the template: follow `../vibe-coding/ui-principles/SKILL.md` (no eyebrows, no serif, full borders only, no emoji icons, keyboard-accessible controls).
 
-## Mode C — Refresh / audit
-1. Re-pull the same window definitions, update `DASH`, re-run the Mode B checks.
-2. Compare against the previous version: list metrics that moved past a threshold, new red cells, and anything that changed definition.
-3. If a metric definition or threshold needs to change, edit the framework first and tell the user what changed and why.
+## Mode C — Routine: refresh, analyze, publish
+This is what the scheduled agent runs unattended (full steps in `references/automation.md` section 4). Also use it for a manual audit.
+1. Pull every source through its connector and re-run the Mode B checks. On any failure, keep the last good `data.js` and alert the user.
+2. Write `data.js`, then analyze: new red or yellow cells, what crossed a threshold since the last run, likely cause from the segment breakdown, recommended action. Write them as `insights` with real numbers.
+3. Publish and deliver the read to the audience's channel per the send rule.
+4. If a metric definition or threshold needs to change, edit the framework first and ask for approval.
 
 ## Gotchas & learnings
 - **Absolute thresholds, not relative.** Colors must mean the same thing across periods; don't rank-color.
@@ -98,10 +113,12 @@ UI rules for any change to the template: follow `../vibe-coding/ui-principles/SK
 - **Ratios of sums.** Roll-ups compute from totals. The template's `f(row)` columns already do this; keep it that way.
 - **Naming conventions carry data.** If record names encode attributes (test, theme, format, plan), decode them into columns and document the decoding.
 - **Expiring assets.** Hotlinked images or CDN URLs can expire. Embed them or flag a refresh date.
-- **No secrets in the file.** The dashboard is static; keep API keys and account IDs out of it.
+- **No secrets in the file.** The dashboard is static; keep API keys and account IDs out of it. Credentials belong to the connector or the routine's environment.
+- **Don't accept "I'll send you the export" as the plan.** Offer the connector or a scheduled export first. A one-off upload is a prototype.
+- **The routine owns `data.js`.** Never hand-edit it; edit definitions in the HTML.
 - **Verify the render.** Check for broken markup (e.g. nested attributes) by loading the page, not by reading the code.
 
 ## Output format
 - **Framework:** the table from `references/measurement-framework.md`, then "Open questions" (max 5).
-- **Dashboard:** the HTML file, then 3 lines max: data window, what's red, one caveat.
+- **Dashboard:** the URL or file, then 4 lines max: data window, refresh schedule and delivery channel, what's red, one caveat. Add "Leftovers:" only for manual sources or connections the user must make.
 - Lead with the result. No explanations the user didn't ask for.

@@ -17,6 +17,7 @@ nav button:hover{background:var(--soft);color:var(--ink);}
 nav button.on{background:var(--soft);color:var(--ink);font-weight:600;}
 nav button:focus-visible,.tab:focus-visible,th:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
 .hdr-right{margin-left:auto;font-size:11px;color:var(--faint);white-space:nowrap;}
+#stale{display:none;background:var(--rbg);color:var(--r);border-bottom:1px solid #FECACA;padding:8px 16px;font-size:12px;font-weight:600;}
 #sample{display:none;background:var(--ybg);color:var(--y);border-bottom:1px solid #FDE68A;padding:8px 16px;font-size:12px;font-weight:600;}
 .page{display:none;padding:16px;max-width:1440px;margin:0 auto;}
 .page.on{display:block;}
@@ -32,6 +33,9 @@ h3{font-size:14px;font-weight:700;margin:20px 0 8px;}
 .cell .s{font-size:10px;color:var(--mute);margin-top:2px;}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px;}
 .grid2.wide{grid-template-columns:repeat(auto-fit,minmax(520px,1fr));}
+.ins{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--soft);font-size:13px;}
+.ins:last-child{border-bottom:0;}
+.ins .chip{flex-shrink:0;min-width:48px;text-align:center;}
 .ttl{font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--soft);}
 .st{display:grid;grid-template-columns:84px 1fr 60px 44px;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #F9FAFB;}
 .st:last-child{border-bottom:0;}
@@ -89,9 +93,11 @@ td.nm{max-width:240px;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
 </head>
 <body>
 <header><div class="logo" id="logo"></div><nav id="nav"></nav><div class="hdr-right" id="period"></div></header>
+<div id="stale"></div>
 <div id="sample">Sample data. Replace DASH before sharing.</div>
 <main id="main"></main>
 
+<script src="data.js"></script>
 <script>
 // ══ CONFIG: the only block the analyst edits ═══════════════════════════════
 // Example: a three-property hotel group. All numbers are fictional.
@@ -145,6 +151,13 @@ const DASH = {
     {"group":"ap","rows":[{"name":"Organic","counts":{"visits":4560,"searches":912,"booked":105,"stayed":99}},{"name":"Paid search","counts":{"visits":3240,"searches":596,"booked":62,"stayed":58}},{"name":"Email","counts":{"visits":1440,"searches":360,"booked":51,"stayed":48}},{"name":"Metasearch","counts":{"visits":2760,"searches":607,"booked":47,"stayed":44}}]}
   ],
 
+  insights:[
+    {tone:'r', text:'Beach Resort cancels 17.2% of direct bookings against an 8% target, and only 0.7% of visits end in a stay. Tighten the cancellation window first.'},
+    {tone:'g', text:'Airport Inn standard and double rooms are 93-95% occupied at $110-116 ADR. Raise rates.'},
+    {tone:'y', text:'Studio / villa at Beach Resort is 58.9% occupied despite a $413 ADR. Bundle it with breakfast before cutting rate.'},
+    {tone:'y', text:'Metasearch converts searches to bookings at 4-8%, below every other source. Review parity and rate display.'}
+  ],
+
   periods:[
     {id:'mtd', label:'Month to date', groups:[
       {"id":"dt","label":"Downtown","rows":[{"name":"Standard king","availNights":1512,"soldNights":1328,"revenue":209533,"bookings":577,"cancels":38},{"name":"Double queen","availNights":1134,"soldNights":977,"revenue":162384,"bookings":425,"cancels":38},{"name":"Suite","availNights":756,"soldNights":550,"revenue":139557,"bookings":239,"cancels":24},{"name":"Studio / villa","availNights":378,"soldNights":245,"revenue":74351,"bookings":107,"cancels":12}]},
@@ -188,6 +201,17 @@ const DASH = {
 };
 // ══ END CONFIG ═════════════════════════════════════════════════════════════
 
+// Data overlay: the scheduled refresh routine rewrites data.js only. Definitions above stay put.
+// data.js sets window.DASH_DATA = {meta:{period,updated,sample:false}, groups, segments, periods, insights}
+if(window.DASH_DATA){
+  var D=window.DASH_DATA;
+  if(D.meta)Object.assign(DASH.meta,D.meta);
+  if(D.groups&&DASH.funnel)DASH.funnel.groups=D.groups;
+  if(D.segments)DASH.segments=D.segments;
+  if(D.periods)DASH.periods=D.periods;
+  if(D.insights)DASH.insights=D.insights;
+}
+
 var $=function(s,el){return (el||document).querySelector(s);};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
 var ok=function(v){return typeof v==='number'&&isFinite(v);};
@@ -215,7 +239,7 @@ function sum(groups){
 function persist(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v));}catch(e){return null;}}
 
 // Pages
-var PAGES=[['overview','Overview',DASH.funnel||DASH.kpis,buildOverview],['perf','Performance',DASH.periods,buildPerf],['actions','Actions',DASH.actions&&DASH.periods,buildActions],['exp','Experiments',DASH.experiments,buildExp],['fw','Framework',DASH.framework,buildFw]].filter(function(p){return p[2];});
+var PAGES=[['overview','Overview',DASH.funnel||DASH.kpis||DASH.insights,buildOverview],['perf','Performance',DASH.periods,buildPerf],['actions','Actions',DASH.actions&&DASH.periods,buildActions],['exp','Experiments',DASH.experiments,buildExp],['fw','Framework',DASH.framework,buildFw]].filter(function(p){return p[2];});
 function show(id){
   PAGES.forEach(function(p){$('#pg-'+p[0]).classList.toggle('on',p[0]===id);});
   document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.p===id);});
@@ -251,6 +275,10 @@ function renderHeat(seg){
 }
 function buildOverview(){
   var F=DASH.funnel,G=F?F.groups:[],T=F?sum(G):{},out='<h2>Overview</h2><div class="sub">'+esc(DASH.meta.period)+'</div>';
+  if(DASH.insights&&DASH.insights.length){
+    var tl={g:'Good',y:'Watch',r:'Act'};
+    out+='<h3>This period\'s read</h3><div class="card pad">'+DASH.insights.map(function(i){return '<div class="ins"><span class="chip '+esc(i.tone)+'">'+tl[i.tone]+'</span><span>'+esc(i.text)+'</span></div>';}).join('')+'</div><div style="height:16px"></div>';
+  }
   if(DASH.kpis&&F){
     out+='<div class="strip">'+DASH.kpis.map(function(k){
       return '<div class="cell"><div class="k">'+esc(k.label)+'</div><div class="v">'+fmt(k.f(T),k.fmt)+'</div><div class="s">'+G.map(function(g){return esc(g.label)+' '+fmt(k.f(g.totals),k.fmt);}).join(' &middot; ')+'</div></div>';
@@ -357,7 +385,16 @@ function buildFw(){
 // Boot
 document.title=DASH.meta.title+' Dashboard';
 document.documentElement.style.setProperty('--accent',DASH.meta.accent);
-$('#logo').textContent=DASH.meta.title;$('#period').textContent=DASH.meta.period;
+$('#logo').textContent=DASH.meta.title;
+(function(){
+  var t=DASH.meta.period,u=DASH.meta.updated?new Date(DASH.meta.updated):null;
+  if(u&&!isNaN(u)){
+    t+=' \u00b7 Updated '+u.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+    var hrs=(Date.now()-u.getTime())/36e5,lim=DASH.meta.staleAfterHours||36;
+    if(hrs>lim){$('#stale').textContent='Data is '+Math.round(hrs)+' hours old. The refresh routine may have failed. Check it before relying on these numbers.';$('#stale').style.display='block';}
+  }
+  $('#period').textContent=t;
+})();
 if(DASH.meta.sample){$('#sample').textContent=DASH.meta.sampleNote||'Sample data. Replace DASH before sharing.';$('#sample').style.display='block';}
 $('#main').innerHTML=PAGES.map(function(p){return '<section class="page" id="pg-'+p[0]+'"></section>';}).join('');
 $('#nav').innerHTML=PAGES.map(function(p){return '<button data-p="'+p[0]+'">'+p[1]+'</button>';}).join('');

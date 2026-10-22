@@ -41,6 +41,7 @@ A folder of three skills for building interfaces that look designed, not templat
 ### 📊 Data Analyst
 Your measurement and dashboard analyst, for any funnel or KPI tree (product, revenue, ops, support, content). See **[data-analyst/SKILL.md](data-analyst/SKILL.md)**. Build dashboards in **Claude Code**, or in **ChatGPT with the GitHub plugin**; plain chat can draft the framework only. It:
 - **Onboards in one message** — goal, funnel, data sources, audience, cuts and targets.
+- **Automates the data** — finds and connects the connectors for every source, then runs a scheduled routine that pulls, checks, analyzes, publishes and delivers the read ([method](data-analyst/references/automation.md)). Nobody updates it by hand, and a stale-data banner flags a failed refresh.
 - **Designs the measurement framework** — north star, funnel definitions, drivers, guardrails, thresholds and decision rules ([method](data-analyst/references/measurement-framework.md)). Nothing gets built until you approve it.
 - **Builds the dashboard** from a single-file, config-driven [HTML template](data-analyst/templates/dashboard-template.html): overview funnel, segment heatmap, sortable performance tables, act/hold/fix lists, an experiments board and the framework itself.
 - **Ships with worked examples** (fictional data): a [retail store group](data-analyst/examples/retail-store-dashboard.html), a [hotel group](data-analyst/examples/hotel-dashboard.html) and a [cafe](data-analyst/examples/cafe-dashboard.html).
