@@ -38,6 +38,15 @@ A folder of three skills for building interfaces that look designed, not templat
 - **[Premium Pages](vibe-coding/premium-pages/SKILL.md)**: the layout recipe for any multi-section page. It covers a hero with a live product preview, alternating section backgrounds, photo-backed sections, three levels of hierarchy, high-contrast pricing and copy rules.
 - **[Software Landing Page](vibe-coding/software-landing-page/SKILL.md)**: the landing page recipe for software products. It shows the product working, uses an interactive product tour instead of crammed feature grids, leads pricing with the outcome, and cuts any section that does nothing.
 
+### 📊 Data Analyst
+Your measurement and dashboard analyst, for any funnel or KPI tree (product, revenue, ops, support, content). See **[data-analyst/SKILL.md](data-analyst/SKILL.md)**. Build dashboards in **Claude Code**, or in **ChatGPT with the GitHub plugin**; plain chat can draft the framework only. It:
+- **Onboards in one message** — goal, funnel, data sources, audience, cuts and targets.
+- **Automates the data** — finds and connects the connectors for every source, then runs a scheduled routine that pulls, checks, analyzes, publishes and delivers the read ([method](data-analyst/references/automation.md)). Nobody updates it by hand, and a stale-data banner flags a failed refresh.
+- **Designs the measurement framework** — north star, funnel definitions, drivers, guardrails, thresholds and decision rules ([method](data-analyst/references/measurement-framework.md)). Nothing gets built until you approve it.
+- **Builds the dashboard** from a single-file, config-driven [HTML template](data-analyst/templates/dashboard-template.html): overview funnel, segment heatmap, sortable performance tables, act/hold/fix lists, an experiments board and the framework itself.
+- **Ships with worked examples** (fictional data): a [retail store group](data-analyst/examples/retail-store-dashboard.html), a [hotel group](data-analyst/examples/hotel-dashboard.html) and a [cafe](data-analyst/examples/cafe-dashboard.html).
+- **Refreshes and audits** — re-pulls data, re-runs the checks and flags what moved.
+
 ### ⚖️ Legal Assistant
 A folder of skills for a law firm's AI employee. See **[legal-assistant/README.md](legal-assistant/README.md)**.
 - **[Daily Inbox Brief](legal-assistant/daily-inbox-brief/SKILL.md)**: a weekday-morning Gmail scan that returns a prioritized brief with replies drafted for approval.
@@ -48,8 +57,8 @@ Shared creative references:
 
 ## How to use
 
-1. Add this repo to your Claude project (or reference it).
-2. Say, e.g., *"be my growth marketing manager"*, *"be my creative director"*, or *"turn this transcript into demand-gen clips."*
+1. Add this repo to your Claude project (or reference it). To build files, such as the Data Analyst's dashboards, use **Claude Code**, or **ChatGPT with the GitHub plugin** connected to this repo.
+2. Say, e.g., *"be my growth marketing manager"*, *"be my creative director"*, *"be my data analyst, build me a dashboard"*, or *"turn this transcript into demand-gen clips."*
 3. On first run each skill asks a few grouped questions to build the profile it needs. The video editor specifically locks the visual style before transcript analysis.
 4. Claude stores that profile in **your** project/memory and reuses it every time — so the shared skill files stay generic while your setup stays personal.
 

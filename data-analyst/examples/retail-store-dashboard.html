@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maple &amp; Main Dashboard</title>
+<style>
+:root{--ink:#111827;--mute:#6B7280;--faint:#9CA3AF;--line:#E5E7EB;--soft:#F3F4F6;--bg:#F7F8FA;--card:#fff;--accent:#2563EB;--g:#15803D;--gbg:#F0FDF4;--y:#A16207;--ybg:#FFFBEB;--r:#B91C1C;--rbg:#FEF2F2;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5;}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:0 16px;display:flex;align-items:center;height:52px;gap:12px;position:sticky;top:0;z-index:10;}
+.logo{font-weight:700;font-size:15px;flex-shrink:0;}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+nav::-webkit-scrollbar{display:none;}
+nav button{padding:6px 10px;border:0;background:none;border-radius:6px;font:inherit;font-size:12px;font-weight:500;color:var(--mute);cursor:pointer;white-space:nowrap;}
+nav button:hover{background:var(--soft);color:var(--ink);}
+nav button.on{background:var(--soft);color:var(--ink);font-weight:600;}
+nav button:focus-visible,.tab:focus-visible,th:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+.hdr-right{margin-left:auto;font-size:11px;color:var(--faint);white-space:nowrap;}
+#stale{display:none;background:var(--rbg);color:var(--r);border-bottom:1px solid #FECACA;padding:8px 16px;font-size:12px;font-weight:600;}
+#sample{display:none;background:var(--ybg);color:var(--y);border-bottom:1px solid #FDE68A;padding:8px 16px;font-size:12px;font-weight:600;}
+.page{display:none;padding:16px;max-width:1440px;margin:0 auto;}
+.page.on{display:block;}
+h2{font-size:18px;font-weight:700;}
+h3{font-size:14px;font-weight:700;margin:20px 0 8px;}
+.sub{font-size:12px;color:var(--faint);margin:2px 0 14px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+.pad{padding:16px;}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+.cell{background:var(--card);padding:12px 14px;}
+.cell .k{font-size:11px;color:var(--mute);}
+.cell .v{font-size:18px;font-weight:700;margin-top:2px;}
+.cell .s{font-size:10px;color:var(--mute);margin-top:2px;}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px;}
+.grid2.wide{grid-template-columns:repeat(auto-fit,minmax(520px,1fr));}
+.ins{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--soft);font-size:13px;}
+.ins:last-child{border-bottom:0;}
+.ins .chip{flex-shrink:0;min-width:48px;text-align:center;}
+.ttl{font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--soft);}
+.st{display:grid;grid-template-columns:84px 1fr 60px 44px;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid #F9FAFB;}
+.st:last-child{border-bottom:0;}
+.st .l{font-size:11px;font-weight:600;color:var(--mute);}
+.bar{height:12px;background:var(--soft);border-radius:6px;overflow:hidden;}
+.bar i{display:block;height:100%;border-radius:6px;}
+.st .n{font-size:11px;font-weight:700;text-align:right;}
+.st .c{font-size:11px;font-weight:700;text-align:right;}
+.sum{display:flex;gap:24px;margin-top:12px;padding-top:12px;border-top:1px solid var(--soft);flex-wrap:wrap;}
+.sum .k{font-size:11px;color:var(--mute);}
+.sum .v{font-size:16px;font-weight:700;}
+.tabs{display:flex;gap:5px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;}
+.tab{padding:5px 12px;border-radius:6px;font:inherit;font-size:12px;font-weight:500;color:var(--mute);cursor:pointer;border:1px solid var(--line);background:var(--card);white-space:nowrap;}
+.tab:hover{background:var(--soft);color:var(--ink);}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:#F9FAFB;padding:7px 10px;text-align:left;font-size:11px;font-weight:600;color:var(--mute);border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none;}
+th.num,td.num{text-align:right;font-variant-numeric:tabular-nums;}
+th:hover{color:var(--ink);background:var(--soft);}
+th.sorted{color:var(--accent);}
+td{padding:7px 10px;border-bottom:1px solid var(--soft);white-space:nowrap;}
+tr:last-child td{border-bottom:0;}
+tr:hover td{background:#FAFAFA;}
+td.nm{max-width:240px;overflow:hidden;text-overflow:ellipsis;font-weight:500;}
+.chip{display:inline-block;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:700;}
+.g{background:var(--gbg);color:var(--g);}.y{background:var(--ybg);color:var(--y);}.r{background:var(--rbg);color:var(--r);}
+.none{color:var(--faint);}
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;background:var(--soft);color:var(--mute);}
+.hm{width:100%;border-collapse:separate;border-spacing:2px;font-size:11px;}
+.hm th{background:none;border:0;padding:4px 6px;font-size:10px;text-align:center;cursor:default;}
+.hm th:first-child,.hm td:first-child{text-align:left;}
+.hm td{padding:4px 6px;border-radius:4px;text-align:center;font-weight:600;border:0;}
+.hm td:first-child{font-weight:500;background:none!important;}
+.hm td.g{background:rgba(22,163,74,.08);}.hm td.y{background:rgba(217,119,6,.09);}.hm td.r{background:rgba(220,38,38,.07);}
+.net{display:flex;gap:24px;padding:12px 16px;background:var(--gbg);border:1px solid #BBF7D0;border-radius:8px;margin-bottom:14px;flex-wrap:wrap;}
+.net .k{font-size:11px;color:var(--mute);}.net .v{font-size:18px;font-weight:700;}
+.rule{margin-left:auto;font-size:11px;color:var(--faint);max-width:260px;}
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;align-items:start;}
+.col{background:#F9FAFB;border-radius:10px;padding:12px;min-height:160px;}
+.col.over{background:#EFF6FF;}
+.col h4{font-size:12px;font-weight:700;margin-bottom:10px;display:flex;gap:6px;align-items:center;}
+.col h4 span{background:var(--line);color:var(--mute);font-size:10px;padding:1px 6px;border-radius:20px;}
+.k-card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:7px;cursor:grab;position:relative;}
+.k-card b{font-size:12px;display:block;padding-right:18px;}
+.k-card p{font-size:11px;color:var(--mute);margin-top:4px;}
+.k-card .pr{font-size:10px;font-weight:700;margin-top:6px;display:inline-block;}
+.k-card button{position:absolute;top:6px;right:6px;border:0;background:none;color:var(--faint);cursor:pointer;font-size:12px;}
+.add{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.add input,.add select{padding:7px 10px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:12px;background:var(--card);}
+.add input{flex:1;min-width:180px;}
+.add button{padding:7px 14px;border:0;border-radius:6px;background:var(--ink);color:#fff;font:inherit;font-size:12px;font-weight:600;cursor:pointer;}
+@media(max-width:640px){.board{grid-template-columns:1fr 1fr;}.page{padding:10px;}.grid2,.grid2.wide{grid-template-columns:1fr;}header{padding:0 10px;}}
+</style>
+</head>
+<body>
+<header><div class="logo" id="logo"></div><nav id="nav"></nav><div class="hdr-right" id="period"></div></header>
+<div id="stale"></div>
+<div id="sample">Sample data. Replace DASH before sharing.</div>
+<main id="main"></main>
+
+<script src="data.js"></script>
+<script>
+// ══ CONFIG: the only block the analyst edits ═══════════════════════════════
+// Example: a three-location home goods retailer (brick and mortar). All numbers are fictional.
+const DASH = {
+  meta:{ title:'Maple & Main', period:'Oct 1-21', accent:'#2563EB', sample:true, sampleNote:'Example data for a fictional three-store retailer.' },
+  groupLabel:'Store',
+  segmentLabel:'Daypart',
+
+  columns:[
+    {key:'visitors',    label:'Zone visitors',  fmt:'int'},
+    {key:'transactions',label:'Transactions',   fmt:'int'},
+    {key:'convRate',    label:'Conversion rate',fmt:'pct', better:'high', green:0.30, yellow:0.22, f:r=>r.transactions/r.visitors},
+    {key:'sales',       label:'Sales',          fmt:'usd'},
+    {key:'basket',      label:'Avg basket',     fmt:'usd', better:'high', green:45, yellow:35, f:r=>r.sales/r.transactions},
+    {key:'spv',         label:'Sales per visitor',fmt:'usd', better:'high', green:15, yellow:10, f:r=>r.sales/r.visitors},
+    {key:'laborPct',    label:'Labor % of sales',fmt:'pct', better:'low', green:0.25, yellow:0.30, f:r=>r.labor/r.sales}
+  ],
+  defaultSort:{key:'spv', dir:'desc'},
+
+  funnel:{
+    stages:[
+      {key:'door',      label:'Door count'},
+      {key:'engaged',   label:'Engaged',   green:55, yellow:40},
+      {key:'purchased', label:'Purchased', green:50, yellow:40},
+      {key:'repeat',    label:'Repeat (30d)', green:30, yellow:15}
+    ],
+    overall:{green:8, yellow:5},
+    overallLabel:'Door to repeat buyer',
+    summary:[
+      {label:'Sales',      fmt:'usd', f:t=>t.sales},
+      {label:'Avg basket', fmt:'usd', f:t=>t.sales/t.purchased},
+      {label:'Labor % of sales', fmt:'pct', f:t=>t.labor/t.sales}
+    ],
+    groups:[
+      {"id":"dt","label":"Downtown","color":"#2563EB","totals":{"door":21800,"engaged":12412,"purchased":6341,"repeat":1991,"sales":298027,"labor":71526}},
+      {"id":"rv","label":"Riverside","color":"#0F766E","totals":{"door":14200,"engaged":7249,"purchased":3348,"repeat":1221,"sales":174096,"labor":47006}},
+      {"id":"ap","label":"Airport","color":"#B45309","totals":{"door":33500,"engaged":11838,"purchased":4769,"repeat":434,"sales":181222,"labor":56179}}
+    ]
+  },
+  kpis:[
+    {label:'Door count',       fmt:'int', f:t=>t.door},
+    {label:'Transactions',     fmt:'int', f:t=>t.purchased},
+    {label:'Conversion rate',  fmt:'pct', f:t=>t.purchased/t.door},
+    {label:'Sales',            fmt:'usd', f:t=>t.sales},
+    {label:'Avg basket',       fmt:'usd', f:t=>t.sales/t.purchased},
+    {label:'Sales per visitor',fmt:'usd', f:t=>t.sales/t.door},
+    {label:'Labor % of sales', fmt:'pct', f:t=>t.labor/t.sales}
+  ],
+  segments:[
+    {"group":"dt","rows":[{"name":"Morning","counts":{"door":4796,"engaged":2921,"purchased":1640,"repeat":508}},{"name":"Midday","counts":{"door":6758,"engaged":3920,"purchased":2038,"repeat":632}},{"name":"Afternoon","counts":{"door":6540,"engaged":3679,"purchased":1837,"repeat":569}},{"name":"Evening","counts":{"door":3706,"engaged":1892,"purchased":826,"repeat":282}}]},
+    {"group":"rv","rows":[{"name":"Morning","counts":{"door":3124,"engaged":1706,"purchased":866,"repeat":312}},{"name":"Midday","counts":{"door":4402,"engaged":2289,"purchased":1076,"repeat":387}},{"name":"Afternoon","counts":{"door":4260,"engaged":2149,"purchased":970,"repeat":349}},{"name":"Evening","counts":{"door":2414,"engaged":1105,"purchased":436,"repeat":173}}]},
+    {"group":"ap","rows":[{"name":"Morning","counts":{"door":7370,"engaged":2786,"purchased":1234,"repeat":111}},{"name":"Midday","counts":{"door":10385,"engaged":3739,"purchased":1533,"repeat":138}},{"name":"Afternoon","counts":{"door":10050,"engaged":3509,"purchased":1381,"repeat":124}},{"name":"Evening","counts":{"door":5695,"engaged":1804,"purchased":621,"repeat":61}}]}
+  ],
+
+  insights:[
+    {tone:'r', text:'Airport converts 14.2% of door traffic against 29.1% at Downtown. Engaged-to-purchased is fine; the gap is at the door. Test the entrance layout first.'},
+    {tone:'r', text:'Seasonal conversion is red in all three stores (15-19%). It is high traffic with low yield: move or shrink the display.'},
+    {tone:'y', text:'Airport labor is 31.0% of sales against a 25% target. Cut off-peak coverage before touching peak hours.'},
+    {tone:'g', text:'Kitchen and Gifts clear 34% conversion in every store. Protect their floor space.'}
+  ],
+
+  periods:[
+    {id:'mtd', label:'Month to date', groups:[
+      {"id":"dt","label":"Downtown","rows":[{"name":"Apparel","visitors":5280,"transactions":1523,"sales":97176,"labor":27180},{"name":"Home decor","visitors":4174,"transactions":1276,"sales":70288,"labor":14305},{"name":"Kitchen","visitors":3539,"transactions":1279,"sales":51064,"labor":10014},{"name":"Gifts","visitors":4589,"transactions":1897,"sales":54298,"labor":11444},{"name":"Seasonal","visitors":5728,"transactions":1097,"sales":25201,"labor":8583}]},
+      {"id":"rv","label":"Riverside","rows":[{"name":"Apparel","visitors":3694,"transactions":898,"sales":55605,"labor":17862},{"name":"Home decor","visitors":2441,"transactions":820,"sales":43027,"labor":9401},{"name":"Kitchen","visitors":1806,"transactions":690,"sales":27529,"labor":6581},{"name":"Gifts","visitors":2499,"transactions":1139,"sales":32071,"labor":7521},{"name":"Seasonal","visitors":4191,"transactions":636,"sales":15863,"labor":5641}]},
+      {"id":"ap","label":"Airport","rows":[{"name":"Apparel","visitors":3416,"transactions":921,"sales":57063,"labor":21348},{"name":"Home decor","visitors":3218,"transactions":635,"sales":35818,"labor":11236},{"name":"Kitchen","visitors":2124,"transactions":765,"sales":31696,"labor":7865},{"name":"Gifts","visitors":3548,"transactions":1307,"sales":38377,"labor":8989},{"name":"Seasonal","visitors":4632,"transactions":787,"sales":18268,"labor":6741}]}
+    ]},
+    {id:'wk',  label:'Last 7 days',   groups:[
+      {"id":"dt","label":"Downtown","rows":[{"name":"Apparel","visitors":2199,"transactions":512,"sales":30866,"labor":8633},{"name":"Home decor","visitors":1308,"transactions":441,"sales":24811,"labor":5050},{"name":"Kitchen","visitors":1098,"transactions":438,"sales":17125,"labor":3358},{"name":"Gifts","visitors":1415,"transactions":642,"sales":17912,"labor":3775},{"name":"Seasonal","visitors":1828,"transactions":352,"sales":8163,"labor":2780}]},
+      {"id":"rv","label":"Riverside","rows":[{"name":"Apparel","visitors":1077,"transactions":304,"sales":19025,"labor":6111},{"name":"Home decor","visitors":737,"transactions":245,"sales":13449,"labor":2938},{"name":"Kitchen","visitors":519,"transactions":204,"sales":8705,"labor":2081},{"name":"Gifts","visitors":917,"transactions":365,"sales":10450,"labor":2451},{"name":"Seasonal","visitors":1488,"transactions":205,"sales":5151,"labor":1832}]},
+      {"id":"ap","label":"Airport","rows":[{"name":"Apparel","visitors":1197,"transactions":327,"sales":19957,"labor":7466},{"name":"Home decor","visitors":1156,"transactions":218,"sales":11500,"labor":3607},{"name":"Kitchen","visitors":757,"transactions":259,"sales":10919,"labor":2709},{"name":"Gifts","visitors":983,"transactions":440,"sales":12989,"labor":3042},{"name":"Seasonal","visitors":1342,"transactions":270,"sales":6415,"labor":2367}]}
+    ]}
+  ],
+
+  actions:{period:'mtd', metric:'convRate', goodAt:0.34, badAt:0.20, goodMin:{key:'visitors',n:1500}, badMin:{key:'visitors',n:1500},
+    goodLabel:'Protect and promote', badLabel:'Fix layout or staffing', show:['visitors','sales','spv']},
+
+  experiments:[
+    {id:'e1', status:'todo',  title:'Move seasonal display to the entrance (Airport)', note:'Seasonal conversion rises above 20% without lowering apparel traffic.', priority:'high'},
+    {id:'e2', status:'todo',  title:'Second register on Saturday afternoons (Downtown)', note:'Cuts abandoned queues; engaged-to-purchased moves up 3 points.', priority:'medium'},
+    {id:'e3', status:'doing', title:'Loyalty prompt at checkout (all stores)', note:'Repeat buyers (30d) rise 2 points at Riverside first.', priority:'high'},
+    {id:'e4', status:'done',  title:'Staggered morning shifts (Riverside)', note:'Labor % down 1.5 points with no conversion drop.', priority:'low'}
+  ],
+
+  framework:{
+    summary:'One north star, three drivers a store manager can move, and guardrails that stop discounting or overstaffing from buying the number.',
+    metrics:[
+      {tier:'North star', name:'Sales per visitor', definition:'Net sales / door count, same store and period', source:'POS + door counter', target:'>= $11', cadence:'Weekly'},
+      {tier:'Driver', name:'Conversion rate', definition:'Transactions / door count', source:'POS + door counter', target:'>= 30%', cadence:'Daily'},
+      {tier:'Driver', name:'Avg basket', definition:'Net sales / transactions', source:'POS', target:'>= $45', cadence:'Weekly'},
+      {tier:'Driver', name:'Door count', definition:'People entering, counter total less staff entries', source:'Door counters', target:'Track vs. same week last year', cadence:'Daily'},
+      {tier:'Guardrail', name:'Labor % of sales', definition:'Labor cost / net sales', source:'Scheduling + payroll', target:'<= 25%', cadence:'Weekly'},
+      {tier:'Guardrail', name:'Repeat buyers (30d)', definition:'Loyalty members buying again within 30 days / purchasers', source:'Loyalty + POS', target:'>= 30%', cadence:'Monthly'}
+    ],
+    notes:[
+      'Door counters undercount in heavy rain and at busy entry times. Treat week-over-week moves under 5% as noise.',
+      'Zone visitors come from department sensors and overlap, so they will not sum to door count.',
+      'Labor uses scheduled hours until payroll closes. Thresholds are provisional until they hold for four weeks.',
+      'Repeat (30d) lags by a month. Judge the most recent 30 days on conversion and basket only.'
+    ]
+  }
+};
+// ══ END CONFIG ═════════════════════════════════════════════════════════════
+
+// Data overlay: the scheduled refresh routine rewrites data.js only. Definitions above stay put.
+// data.js sets window.DASH_DATA = {meta:{period,updated,sample:false}, groups, segments, periods, insights}
+if(window.DASH_DATA){
+  var D=window.DASH_DATA;
+  if(D.meta)Object.assign(DASH.meta,D.meta);
+  if(D.groups&&DASH.funnel)DASH.funnel.groups=D.groups;
+  if(D.segments)DASH.segments=D.segments;
+  if(D.periods)DASH.periods=D.periods;
+  if(D.insights)DASH.insights=D.insights;
+}
+
+var $=function(s,el){return (el||document).querySelector(s);};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+var ok=function(v){return typeof v==='number'&&isFinite(v);};
+function fmt(v,t){
+  if(!ok(v))return '—';
+  if(t==='usd'){var a=Math.abs(v);return (v<0?'-$':'$')+(a<10?a.toFixed(2):Math.round(a).toLocaleString());}
+  if(t==='pct')return (v*100).toFixed(1)+'%';
+  if(t==='x')return v.toFixed(2)+'x';
+  return Math.round(v).toLocaleString();
+}
+function grade(v,c){
+  if(!ok(v)||!c.better||c.green==null)return '';
+  if(c.better==='high')return v>=c.green?'g':v>=c.yellow?'y':'r';
+  return v<=c.green?'g':v<=c.yellow?'y':'r';
+}
+function colVal(c,r){return c.f?c.f(r):r[c.key];}
+function cell(c,r){
+  var v=colVal(c,r),g=grade(v,c);
+  var s=g?'<span class="chip '+g+'">'+fmt(v,c.fmt)+'</span>':fmt(v,c.fmt);
+  return '<td class="num'+(ok(v)?'':' none')+'">'+s+'</td>';
+}
+function sum(groups){
+  var t={};groups.forEach(function(g){Object.keys(g.totals).forEach(function(k){t[k]=(t[k]||0)+g.totals[k];});});return t;
+}
+function persist(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v));}catch(e){return null;}}
+
+// Pages
+var PAGES=[['overview','Overview',DASH.funnel||DASH.kpis||DASH.insights,buildOverview],['perf','Performance',DASH.periods,buildPerf],['actions','Actions',DASH.actions&&DASH.periods,buildActions],['exp','Experiments',DASH.experiments,buildExp],['fw','Framework',DASH.framework,buildFw]].filter(function(p){return p[2];});
+function show(id){
+  PAGES.forEach(function(p){$('#pg-'+p[0]).classList.toggle('on',p[0]===id);});
+  document.querySelectorAll('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.p===id);});
+}
+function tabs(el,items,onPick){
+  el.innerHTML=items.map(function(it,i){return '<button class="tab'+(i?'':' on')+'" data-i="'+i+'">'+esc(it.label)+'</button>';}).join('');
+  el.onclick=function(e){var b=e.target.closest('.tab');if(!b)return;el.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});b.classList.add('on');onPick(+b.dataset.i);};
+}
+
+// Overview
+function renderFunnel(g){
+  var st=DASH.funnel.stages,T=g.totals,max=T[st[0].key]||1;
+  var rows=st.map(function(s,i){
+    var n=T[s.key],w=Math.max(Math.round(n/max*100),2),c='';
+    if(i>0&&T[st[i-1].key]){var p=n/T[st[i-1].key];c='<span class="chip '+grade(p*100,{better:'high',green:s.green,yellow:s.yellow})+'">'+Math.round(p*100)+'%</span>';}
+    return '<div class="st"><div class="l">'+esc(s.label)+'</div><div class="bar"><i style="width:'+w+'%;background:'+g.color+'"></i></div><div class="n">'+fmt(n)+'</div><div class="c">'+c+'</div></div>';
+  }).join('');
+  var last=st[st.length-1].key,ov=T[last]/max*100,o=DASH.funnel.overall;
+  var sm=(DASH.funnel.summary||[]).map(function(m){return '<div><div class="k">'+esc(m.label)+'</div><div class="v">'+fmt(m.f(T),m.fmt)+'</div></div>';}).join('');
+  return '<div class="card pad"><div class="ttl" style="color:'+g.color+'">'+esc(g.label)+'</div>'+rows
+    +'<div class="sum"><div><div class="k">'+esc(DASH.funnel.overallLabel||'Overall conversion')+'</div><div class="v"><span class="chip '+grade(ov,{better:'high',green:o.green,yellow:o.yellow})+'">'+ov.toFixed(1)+'%</span></div></div>'+sm+'</div></div>';
+}
+function renderHeat(seg){
+  var st=DASH.funnel.stages,g=DASH.funnel.groups.filter(function(x){return x.id===seg.group;})[0],o=DASH.funnel.overall;
+  var head='<tr><th>'+esc(DASH.segmentLabel)+'</th>'+st.slice(1).map(function(s,i){return '<th>'+esc(st[i].label)+' &rarr; '+esc(s.label)+'</th>';}).join('')+'<th>Overall</th></tr>';
+  var body=seg.rows.map(function(r){
+    var tds=st.slice(1).map(function(s,i){var a=r.counts[st[i].key],b=r.counts[s.key];
+      if(!a)return '<td class="none">—</td>';var p=b/a*100;return '<td class="'+grade(p,{better:'high',green:s.green,yellow:s.yellow})+'">'+Math.round(p)+'%</td>';}).join('');
+    var ov=r.counts[st[st.length-1].key]/r.counts[st[0].key]*100;
+    return '<tr><td>'+esc(r.name)+'</td>'+tds+'<td class="'+grade(ov,{better:'high',green:o.green,yellow:o.yellow})+'">'+ov.toFixed(1)+'%</td></tr>';
+  }).join('');
+  return '<div class="card pad"><div class="ttl">'+esc(g.label)+' by '+esc(DASH.segmentLabel.toLowerCase())+'</div><div class="wrap"><table class="hm">'+head+body+'</table></div></div>';
+}
+function buildOverview(){
+  var F=DASH.funnel,G=F?F.groups:[],T=F?sum(G):{},out='<h2>Overview</h2><div class="sub">'+esc(DASH.meta.period)+'</div>';
+  if(DASH.insights&&DASH.insights.length){
+    var tl={g:'Good',y:'Watch',r:'Act'};
+    out+='<h3>This period\'s read</h3><div class="card pad">'+DASH.insights.map(function(i){return '<div class="ins"><span class="chip '+esc(i.tone)+'">'+tl[i.tone]+'</span><span>'+esc(i.text)+'</span></div>';}).join('')+'</div><div style="height:16px"></div>';
+  }
+  if(DASH.kpis&&F){
+    out+='<div class="strip">'+DASH.kpis.map(function(k){
+      return '<div class="cell"><div class="k">'+esc(k.label)+'</div><div class="v">'+fmt(k.f(T),k.fmt)+'</div><div class="s">'+G.map(function(g){return esc(g.label)+' '+fmt(k.f(g.totals),k.fmt);}).join(' &middot; ')+'</div></div>';
+    }).join('')+'</div>';
+  }
+  if(F)out+='<h3>Funnel by '+esc(DASH.groupLabel.toLowerCase())+'</h3><div class="grid2">'+G.map(renderFunnel).join('')+'</div>';
+  if(F&&DASH.segments)out+='<h3>Conversion by '+esc(DASH.segmentLabel.toLowerCase())+'</h3><div class="grid2 wide">'+DASH.segments.map(renderHeat).join('')+'</div>';
+  $('#pg-overview').innerHTML=out;
+}
+
+// Performance
+var SORT={};
+function table(id,rows,cols,onRow){
+  var s=SORT[id]||DASH.defaultSort;
+  var c0=cols.filter(function(c){return c.key===s.key;})[0]||cols[0];
+  var sorted=rows.slice().sort(function(a,b){
+    var av=colVal(c0,a),bv=colVal(c0,b);
+    av=ok(av)?av:(s.dir==='asc'?Infinity:-Infinity);bv=ok(bv)?bv:(s.dir==='asc'?Infinity:-Infinity);
+    return s.dir==='asc'?av-bv:bv-av;
+  });
+  var head='<thead><tr><th tabindex="0" data-k="name">Name</th>'+(rows.length&&rows[0]._g?'<th>'+esc(DASH.groupLabel)+'</th>':'')+cols.map(function(c){
+    return '<th class="num'+(s.key===c.key?' sorted':'')+'" tabindex="0" data-k="'+c.key+'">'+esc(c.label)+(s.key===c.key?(s.dir==='asc'?' ↑':' ↓'):'')+'</th>';}).join('')+'</tr></thead>';
+  var body='<tbody>'+sorted.map(function(r){return '<tr><td class="nm">'+esc(r.name)+'</td>'+(r._g?'<td><span class="tag">'+esc(r._g)+'</span></td>':'')+cols.map(function(c){return cell(c,r);}).join('')+'</tr>';}).join('')+'</tbody>';
+  return {html:head+body,sorted:sorted};
+}
+function bindSort(tbl,id,redraw){
+  function pick(e){var th=e.target.closest('th[data-k]');if(!th||th.dataset.k==='name')return;
+    var k=th.dataset.k,s=SORT[id]||DASH.defaultSort,c=DASH.columns.filter(function(x){return x.key===k;})[0];
+    var dflt=c&&c.better==='low'?'asc':'desc';
+    SORT[id]={key:k,dir:s.key===k?(s.dir==='asc'?'desc':'asc'):dflt};redraw();}
+  tbl.onclick=pick;tbl.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(e);}};
+}
+function buildPerf(){
+  var el=$('#pg-perf');
+  el.innerHTML='<h2>Performance</h2><div class="sub">Click a column to sort. Colors use the thresholds in the Framework tab.</div><div class="tabs" id="pt"></div><div class="tabs" id="gt"></div><div class="card"><div class="wrap"><table id="ptbl"></table></div></div>';
+  var pi=0,gi=0;
+  function draw(){
+    var p=DASH.periods[pi],g=p.groups[gi],id='perf';
+    $('#ptbl').innerHTML=table(id,g.rows,DASH.columns).html;bindSort($('#ptbl'),id,draw);
+  }
+  tabs($('#pt'),DASH.periods,function(i){pi=i;gi=0;groupTabs();draw();});
+  function groupTabs(){tabs($('#gt'),DASH.periods[pi].groups,function(i){gi=i;draw();});}
+  groupTabs();draw();
+}
+
+// Actions
+function buildActions(){
+  var A=DASH.actions,col=DASH.columns.filter(function(c){return c.key===A.metric;})[0],hi=col.better!=='low';
+  var p=DASH.periods.filter(function(x){return x.id===A.period;})[0]||DASH.periods[0];
+  var rows=[];p.groups.forEach(function(g){g.rows.forEach(function(r){var c=Object.assign({},r);c._g=g.label;rows.push(c);});});
+  var show=A.show.map(function(k){return DASH.columns.filter(function(c){return c.key===k;})[0];}).concat([col]);
+  var good=rows.filter(function(r){var v=colVal(col,r);return (hi?v>=A.goodAt:v<=A.goodAt)&&r[A.goodMin.key]>=A.goodMin.n;});
+  var bad=rows.filter(function(r){var v=colVal(col,r);return (hi?v<=A.badAt:v>=A.badAt)&&r[A.badMin.key]>=A.badMin.n;});
+  var ge=hi?'&ge;':'&le;',le=hi?'&le;':'&ge;';
+  function lbl(k){var c=DASH.columns.filter(function(x){return x.key===k;})[0];return c?c.label.toLowerCase():k;}
+  function block(t,id,list,color){
+    SORT[id]=SORT[id]||{key:A.metric,dir:(color==='g')===hi?'desc':'asc'};
+    return '<h3 style="color:var(--'+color+')">'+esc(t)+' ('+list.length+')</h3><div class="card"><div class="wrap"><table id="'+id+'"></table></div></div>';
+  }
+  $('#pg-actions').innerHTML='<h2>Actions</h2><div class="sub">'+esc(p.label)+'. Rules come from the measurement framework. Review before acting.</div>'
+    +'<div class="net"><div><div class="k">'+esc(A.goodLabel)+'</div><div class="v" style="color:var(--g)">'+good.length+'</div></div><div><div class="k">'+esc(A.badLabel)+'</div><div class="v" style="color:var(--r)">'+bad.length+'</div></div>'
+    +'<div class="rule">'+esc(A.goodLabel)+': '+esc(col.label)+' '+ge+' '+fmt(A.goodAt,col.fmt)+' and '+esc(lbl(A.goodMin.key))+' &ge; '+fmt(A.goodMin.n)+'.<br>'+esc(A.badLabel)+': '+esc(col.label)+' '+le+' '+fmt(A.badAt,col.fmt)+' and '+esc(lbl(A.badMin.key))+' &ge; '+fmt(A.badMin.n)+'.</div></div>'
+    +block(A.goodLabel,'t-good',good,'g')+block(A.badLabel,'t-bad',bad,'r');
+  [['t-good',good],['t-bad',bad]].forEach(function(x){
+    function draw(){var t=$('#'+x[0]);t.innerHTML=table(x[0],x[1],show).html;bindSort(t,x[0],draw);}draw();
+  });
+}
+
+// Experiments
+var COLS=[['todo','To test'],['doing','Testing'],['done','Evaluated'],['completed','Completed']];
+var XKEY='dash-exp-'+DASH.meta.title,CARDS=persist(XKEY)||(DASH.experiments||[]).slice(),drag=null;
+function buildExp(){
+  var el=$('#pg-exp');
+  el.innerHTML='<h2>Experiments</h2><div class="sub">Log what you change and what you expect. Drag cards between columns. Saved in this browser.</div>'
+    +'<form class="add" id="xf"><input id="xt" placeholder="What are we testing?" required><input id="xn" placeholder="Hypothesis: if we do X, we expect Y because Z"><select id="xp"><option value="high">High</option><option value="medium" selected>Medium</option><option value="low">Low</option></select><button>Add</button></form>'
+    +'<div class="board">'+COLS.map(function(c){return '<div class="col" data-c="'+c[0]+'"><h4>'+c[1]+' <span id="n-'+c[0]+'"></span></h4><div id="l-'+c[0]+'"></div></div>';}).join('')+'</div>';
+  $('#xf').onsubmit=function(e){e.preventDefault();CARDS.push({id:'x'+Date.now(),status:'todo',title:$('#xt').value,note:$('#xn').value,priority:$('#xp').value});persist(XKEY,CARDS);this.reset();drawExp();};
+  el.querySelectorAll('.col').forEach(function(col){
+    col.ondragover=function(e){e.preventDefault();col.classList.add('over');};
+    col.ondragleave=function(){col.classList.remove('over');};
+    col.ondrop=function(e){e.preventDefault();col.classList.remove('over');var c=CARDS.filter(function(x){return x.id===drag;})[0];if(c){c.status=col.dataset.c;persist(XKEY,CARDS);drawExp();}};
+  });
+  drawExp();
+}
+function drawExp(){
+  var pc={high:'var(--r)',medium:'var(--y)',low:'var(--g)'};
+  COLS.forEach(function(c){
+    var list=CARDS.filter(function(x){return x.status===c[0];});
+    $('#n-'+c[0]).textContent=list.length;
+    $('#l-'+c[0]).innerHTML=list.map(function(x){return '<div class="k-card" draggable="true" data-id="'+esc(x.id)+'"><b>'+esc(x.title)+'</b>'+(x.note?'<p>'+esc(x.note)+'</p>':'')+'<span class="pr" style="color:'+pc[x.priority]+'">'+esc(x.priority)+' priority</span><button aria-label="Delete" data-del="'+esc(x.id)+'">&times;</button></div>';}).join('');
+  });
+  document.querySelectorAll('.k-card').forEach(function(k){k.ondragstart=function(){drag=k.dataset.id;};});
+  document.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){CARDS=CARDS.filter(function(x){return x.id!==b.dataset.del;});persist(XKEY,CARDS);drawExp();};});
+}
+
+// Framework
+function buildFw(){
+  var F=DASH.framework;
+  $('#pg-fw').innerHTML='<h2>Measurement framework</h2><div class="sub">'+esc(F.summary)+'</div><div class="card"><div class="wrap"><table><thead><tr><th>Tier</th><th>Metric</th><th>Definition</th><th>Source</th><th>Target</th><th>Cadence</th></tr></thead><tbody>'
+    +F.metrics.map(function(m){return '<tr><td><span class="tag">'+esc(m.tier)+'</span></td><td class="nm">'+esc(m.name)+'</td><td>'+esc(m.definition)+'</td><td>'+esc(m.source)+'</td><td>'+esc(m.target)+'</td><td>'+esc(m.cadence)+'</td></tr>';}).join('')
+    +'</tbody></table></div></div>'+(F.notes&&F.notes.length?'<h3>Data notes</h3><div class="card pad"><ul style="padding-left:18px">'+F.notes.map(function(n){return '<li>'+esc(n)+'</li>';}).join('')+'</ul></div>':'');
+}
+
+// Boot
+document.title=DASH.meta.title+' Dashboard';
+document.documentElement.style.setProperty('--accent',DASH.meta.accent);
+$('#logo').textContent=DASH.meta.title;
+(function(){
+  var t=DASH.meta.period,u=DASH.meta.updated?new Date(DASH.meta.updated):null;
+  if(u&&!isNaN(u)){
+    t+=' \u00b7 Updated '+u.toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+    var hrs=(Date.now()-u.getTime())/36e5,lim=DASH.meta.staleAfterHours||36;
+    if(hrs>lim){$('#stale').textContent='Data is '+Math.round(hrs)+' hours old. The refresh routine may have failed. Check it before relying on these numbers.';$('#stale').style.display='block';}
+  }
+  $('#period').textContent=t;
+})();
+if(DASH.meta.sample){$('#sample').textContent=DASH.meta.sampleNote||'Sample data. Replace DASH before sharing.';$('#sample').style.display='block';}
+$('#main').innerHTML=PAGES.map(function(p){return '<section class="page" id="pg-'+p[0]+'"></section>';}).join('');
+$('#nav').innerHTML=PAGES.map(function(p){return '<button data-p="'+p[0]+'">'+p[1]+'</button>';}).join('');
+$('#nav').onclick=function(e){var b=e.target.closest('button');if(b)show(b.dataset.p);};
+PAGES.forEach(function(p){p[3]();});show(PAGES[0][0]);
+</script>
+</body>
+</html>
