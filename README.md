@@ -47,11 +47,6 @@ Your measurement and dashboard analyst, for any funnel or KPI tree (product, rev
 - **Ships with worked examples** (fictional data): a [retail store group](data-analyst/examples/retail-store-dashboard.html), a [hotel group](data-analyst/examples/hotel-dashboard.html) and a [cafe](data-analyst/examples/cafe-dashboard.html).
 - **Refreshes and audits** — re-pulls data, re-runs the checks and flags what moved.
 
-### ⚖️ Legal Assistant
-A folder of skills for a law firm's AI employee. See **[legal-assistant/README.md](legal-assistant/README.md)**.
-- **[Daily Inbox Brief](legal-assistant/daily-inbox-brief/SKILL.md)**: a weekday-morning Gmail scan that returns a prioritized brief with replies drafted for approval.
-- **[Contract Review](legal-assistant/contract-review/SKILL.md)** (draft): initial redlines on creator contracts, always checking usage rights, net payment terms and kill fees.
-
 Shared creative references:
 - **[Short-Form Video Format Library](creative-director/video-formats.md)** — eight reusable structures for choosing a visual format before scripting or storyboarding.
 
