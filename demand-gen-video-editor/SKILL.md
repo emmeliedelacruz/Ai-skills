@@ -23,8 +23,9 @@ Follow this order. Do not skip approval gates.
 3. Stop for explicit clip approval.
 4. Record the approved decisions in a project-specific **Edit Map**.
 5. Receive and inspect the source video.
-6. Cut and style only the approved clips with FFmpeg.
-7. QC every render and return a clip manifest plus the finished files.
+6. Build the **storyboard** for every clip, collect the user's feedback, and revise until they say "render".
+7. Cut and style only the approved clips with FFmpeg.
+8. QC every render and return a clip manifest plus the finished files.
 
 If a Video Style Profile already exists for the user, reuse it unless they ask to change the style.
 
@@ -159,11 +160,21 @@ Before editing:
 
 Do not replace or regenerate source footage. The default workflow uses the user's original video and audio only.
 
-## Step 6 — FFmpeg edit
+## Step 6 — Storyboard and feedback gate
+
+Every clip gets a storyboard before any full render. Follow the `video-storyboard-artifact` skill (`../video-storyboard-artifact/SKILL.md`).
+
+- Build one storyboard artifact per video (or per batch of clips from the same source): one card per scene/clip with the spoken line, layout, headline, caption style, library effect (ID), end screen, and a real mockup frame.
+- Mockup frames come from the real pipeline: cut a frame from the source with `ffmpeg`, and for library effects use `render_effect.py <ID> cut.mp4 sheet.png --frames t1,t2`. Never fake them.
+- The user leaves per-scene notes and a status (Keep / Change / Cut this scene / Add something) plus global notes. Read them from the artifact yourself; do not ask for a paste.
+- Apply every note to `EDIT_MAP.md` (update only the affected rows), publish the next version showing the original note on each changed scene, and repeat.
+- Render nothing until the user says "render". Revision notes after delivery restart this step, then re-render only the affected clips.
+
+## Step 7 — FFmpeg edit
 
 Use FFmpeg for the actual video editing. Use the scripts in `scripts/` when they fit; use direct FFmpeg commands when custom styling is required.
 
-Follow the approved `EDIT_MAP.md`. Do not make new structural, copy, or style decisions during render unless the user explicitly changes the map.
+Follow the approved `EDIT_MAP.md` (as revised through the storyboard). Do not make new structural, copy, or style decisions during render unless the user explicitly changes the map.
 
 ### Cut behavior
 
@@ -232,7 +243,7 @@ Do not cram multiple CTAs, paragraphs, or feature lists into the end card.
 
 See `references/ffmpeg-editing.md` for tested command patterns.
 
-## Step 6 — Mandatory frame-by-frame QC before delivery
+## Step 8 — Mandatory frame-by-frame QC before delivery
 
 Do not share a video immediately after rendering. Every render must pass both a full visual review and a playback check.
 
@@ -273,6 +284,7 @@ Include the individual downloadable video files. Do not claim a render is finish
 - Source footage is the source of truth. Do not generate replacement presenter footage.
 - Do not spend generative-video credits as part of this workflow unless the user explicitly asks for generated footage.
 - Do not begin editing before clip approval.
+- Do not run a full render before the storyboard is built and the user has said "render".
 - Do not invent transcript lines, timestamps, brand claims, logos, URLs, or CTAs.
 - Use effects from the Video Effect Library only; one per clip by default unless the user says otherwise.
 - Keep brand-specific customization in the user's Video Style Profile, not in this shared skill.

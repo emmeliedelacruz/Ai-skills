@@ -30,6 +30,7 @@ Your transcript-to-short-form editing workflow. It:
 - **Finds demand-gen clips** — reviews timestamped transcripts and ranks strong standalone moments up to 45 seconds.
 - **Stops for approval** — no editing starts until you approve the exact clips/timestamps.
 - **Uses a 37-effect library** — kinetic hooks, zoom-throughs, phone mockups, grade reveals and more, each implemented as a renderer (`scripts/render_effect.py`, Pillow + NumPy + FFmpeg). See the [animated preview](demand-gen-video-editor/references/video-effect-library.html) and the [index with text slots](demand-gen-video-editor/references/effect-library.md); the editor picks one per clip.
+- **Storyboard feedback gate** — before any full render, builds an editable storyboard (real mockup frames, per-scene notes) and revises it from your notes until you say "render". See [Video Storyboard Artifact](video-storyboard-artifact/SKILL.md).
 - **Edits with FFmpeg** — cuts the approved source footage, reframes it for short-form, burns captions, adds headline overlays and end cards, then runs technical QC.
 
 ### 💻 Vibe Coding
