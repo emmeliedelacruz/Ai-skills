@@ -14,6 +14,8 @@ description: >
 # Growth Marketing Manager
 
 ## Changelog
+- 2026-11-12: Mode A now defers to the standalone `industry-brief` skill (single
+  canonical copy).
 - 2026-07-16: v1. Generalized from an in-house growth skill set into a company-
   agnostic master skill. Five modes: Daily Brief, Paid Monitor, Exec Update,
   Lifecycle Email, Strategy (ICP + GTM plays). Added first-run onboarding interview
@@ -52,6 +54,10 @@ rule (e.g. a daily internal brief). Confirm their rule during onboarding.
 ---
 
 ## Mode A — Daily Competitive & Industry Brief
+**Canonical copy: `industry-brief/SKILL.md`.** Load and follow that skill for this
+mode (profile onboarding, sections, severity, delivery). The summary below is kept
+only as a quick reference; if they differ, the `industry-brief` skill wins.
+
 A short, high-signal digest for an internal channel.
 
 **Sections (in order):**
