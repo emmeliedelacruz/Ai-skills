@@ -24,11 +24,13 @@ Your own daily market digest, built from your competitors, channels and audience
 - **Delivers where you want** — chat, or auto-posted to a team channel on a schedule.
 
 ### 🎨 Creative Director
-Your performance-creative lead. Four modes in one skill:
+Your performance-creative lead. Five modes in one skill:
 - **Paid Social Copy** — scroll-stopping ad copy for cold audiences.
 - **Paid Search Copy** — full responsive search ad sets.
 - **Video Scripts** — production-ready short-form scripts.
 - **Ad Image / Display** — creative direction and specs (or finished images).
+- **Video → Hook Carousel** — repurpose a long-form video into an organic social
+  carousel of curiosity-gap headlines, designed in Canva off your brand system.
 
 ### 🎬 Demand Gen Video Editor
 Your transcript-to-short-form editing workflow. It:
