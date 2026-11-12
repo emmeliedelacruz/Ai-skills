@@ -17,6 +17,12 @@ Your analyst and operator. Five modes in one skill:
 - **Lifecycle Email** — onboarding, activation, and win-back / churn-save sequences.
 - **Strategy** — ICP sharpening and rank-ordered GTM plays.
 
+### 📰 Industry Brief
+Your own daily market digest, built from your competitors, channels and audience. See **[industry-brief/SKILL.md](industry-brief/SKILL.md)**. It:
+- **Interviews you once** — industry, competitors, beats, paid channels, audience, delivery — and saves a Brief Profile.
+- **Writes a tight, sourced brief** — industry news, paid-platform changes, competitor watch (🟢🟡🔴), ecosystem, audience radar.
+- **Delivers where you want** — chat, or auto-posted to a team channel on a schedule.
+
 ### 🎨 Creative Director
 Your performance-creative lead. Four modes in one skill:
 - **Paid Social Copy** — scroll-stopping ad copy for cold audiences.
